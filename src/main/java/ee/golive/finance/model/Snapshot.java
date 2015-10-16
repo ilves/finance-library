@@ -1,6 +1,6 @@
 package ee.golive.finance.model;
 
-import ee.golive.finance.domain.Transaction;
+import ee.golive.finance.domain.Transactional;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class Snapshot {
     /**
      * Transactions that happened before the snapshot date time
      */
-    private List<Transaction> transactions;
+    private List<Transactional> transactions;
 
     /**
      * Assets at the time of the snapshot
@@ -31,11 +31,11 @@ public class Snapshot {
         this.snapshotDateTime = snapshotDateTime;
     }
 
-    public List<Transaction> getTransactions() {
+    public List<Transactional> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
+    public void setTransactions(List<Transactional> transactions) {
         this.transactions = transactions;
     }
 

@@ -13,6 +13,7 @@ public class StatementOfAsset {
     private BigDecimal itemsCount;
     private BigDecimal value;
     private BigDecimal price;
+    private BigDecimal initialValue;
 
     public StatementOfAsset(Asset asset) {
         this.asset = asset;
@@ -48,5 +49,13 @@ public class StatementOfAsset {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public BigDecimal getInitialValue() {
+        return initialValue;
+    }
+
+    public void setInitialValue(BigDecimal initialValue) {
+        this.initialValue = initialValue;
     }
 }

@@ -1,7 +1,7 @@
 package ee.golive.finance.service;
 
 import ee.golive.finance.domain.Asset;
-import ee.golive.finance.domain.Transaction;
+import ee.golive.finance.domain.Transactional;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ public class TransactionService {
      * @param dateTime Date time before the transactions happened
      * @return filtered and sorted list
      */
-    public List<Transaction> getTransactionsBefore(DateTime dateTime, List<Transaction> transactions) {
+    public List<Transactional> getTransactionsBefore(DateTime dateTime, List<Transactional> transactions) {
         return transactions
                 .stream()
                 .sorted((x, y) -> x.getDateTime().compareTo(y.getDateTime()))
@@ -28,17 +28,25 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-    public BigDecimal getItemCount(List<Transaction> transactions) {
+    public BigDecimal getItemCount(List<Transactional> transactions) {
         return transactions
                 .stream()
-                .map(Transaction::getCount)
+                .map(Transactional::getCount)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
     }
 
-    public Map<Asset, List<Transaction>> groupByAsset(List<Transaction> transactions) {
+    public BigDecimal getAmountSum(List<Transactional> transactions) {
         return transactions
                 .stream()
-                .collect(Collectors.groupingBy(Transaction::getAsset));
+                .map(Transactional::getAmount)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    public Map<Asset, List<Transactional>> groupByAsset(List<Transactional> transactions) {
+        return transactions
+                .stream()
+                .collect(Collectors.groupingBy(Transactional::getAsset));
     }
 }
