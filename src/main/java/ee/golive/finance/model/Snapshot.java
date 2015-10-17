@@ -1,8 +1,9 @@
 package ee.golive.finance.model;
 
-import ee.golive.finance.domain.Transactional;
+import ee.golive.finance.domain.IsTransaction;
 import org.joda.time.DateTime;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -20,22 +21,27 @@ public class Snapshot {
     /**
      * Transactions that happened before the snapshot date time
      */
-    private List<Transactional> transactions;
+    private List<IsTransaction> transactions;
 
     /**
      * Assets at the time of the snapshot
      */
     private List<StatementOfAsset> portfolio;
 
+    /**
+     * Snapshot value at snapshot date time
+     */
+    private BigDecimal value;
+
     public Snapshot(DateTime snapshotDateTime) {
         this.snapshotDateTime = snapshotDateTime;
     }
 
-    public List<Transactional> getTransactions() {
+    public List<IsTransaction> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(List<Transactional> transactions) {
+    public void setTransactions(List<IsTransaction> transactions) {
         this.transactions = transactions;
     }
 
@@ -53,5 +59,13 @@ public class Snapshot {
 
     public void setPortfolio(List<StatementOfAsset> portfolio) {
         this.portfolio = portfolio;
+    }
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
     }
 }

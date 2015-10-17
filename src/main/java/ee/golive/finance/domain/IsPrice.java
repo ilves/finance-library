@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 /**
  * Created by Taavi on 16.10.2015.
  */
-public interface Priceable {
+public interface IsPrice {
     BigDecimal getPrice();
     DateTime getDateTime();
-    Asset getAsset();
+    IsAsset getAsset();
 }

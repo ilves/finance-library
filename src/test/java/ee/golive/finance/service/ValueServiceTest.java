@@ -1,8 +1,8 @@
 package ee.golive.finance.service;
 
-import ee.golive.finance.domain.Asset;
+import ee.golive.finance.domain.IsAsset;
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.Transactional;
+import ee.golive.finance.domain.IsTransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import ee.golive.finance.model.StatementOfAsset;
@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static ee.golive.finance.MockHelper.getMockTransaction;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -56,7 +57,7 @@ public class ValueServiceTest {
                 valueService.getInternalFlow(snapshot).setScale(2, BigDecimal.ROUND_HALF_UP));
     }
 
-    private List<Transactional> getMockTransactions() {
+    private List<IsTransaction> getMockTransactions() {
         return Arrays.asList(
                 getMockTransaction(10.6, FlowType.INTERNAL),
                 getMockTransaction(23.30, FlowType.EXTERNAL),
@@ -68,17 +69,10 @@ public class ValueServiceTest {
     }
 
     private StatementOfAsset getMockStatement(double count, double price, double value) {
-        StatementOfAsset statement = new StatementOfAsset(mock(Asset.class));
+        StatementOfAsset statement = new StatementOfAsset(mock(IsAsset.class));
         statement.setPrice(new BigDecimal(price));
         statement.setValue(new BigDecimal(value));
         statement.setItemsCount(new BigDecimal(count));
         return statement;
-    }
-
-    private Transactional getMockTransaction(double amount, FlowType flowType) {
-        Transactional transaction = mock(Transactional.class);
-        when(transaction.getAmount()).thenReturn(new BigDecimal(amount));
-        when(transaction.getFlowType()).thenReturn(flowType);
-        return transaction;
     }
 }

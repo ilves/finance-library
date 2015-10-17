@@ -1,8 +1,8 @@
 package ee.golive.finance.service;
 
-import ee.golive.finance.domain.Asset;
-import ee.golive.finance.domain.Priceable;
-import ee.golive.finance.domain.Transactional;
+import ee.golive.finance.domain.IsAsset;
+import ee.golive.finance.domain.IsPrice;
+import ee.golive.finance.domain.IsTransaction;
 import ee.golive.finance.model.StatementOfAsset;
 import org.joda.time.DateTime;
 
@@ -25,8 +25,8 @@ public class PortfolioService {
         this.transactionService = transactionService;
     }
 
-    public List<StatementOfAsset> createPortfolio(List<Transactional> transactions, DateTime portfolioDateTime) {
-        Map<Asset, List<Transactional>> assets = transactionService.groupByAsset(transactions);
+    public List<StatementOfAsset> createPortfolio(List<IsTransaction> transactions, DateTime portfolioDateTime) {
+        Map<IsAsset, List<IsTransaction>> assets = transactionService.groupByAsset(transactions);
         return assets
                 .keySet()
                 .stream()
@@ -34,10 +34,10 @@ public class PortfolioService {
                 .collect(Collectors.toList());
     }
 
-    public StatementOfAsset createStatementOfAsset(Asset asset, List<Transactional> transactions, DateTime dateTime) {
+    public StatementOfAsset createStatementOfAsset(IsAsset asset, List<IsTransaction> transactions, DateTime dateTime) {
         BigDecimal itemCount = transactionService.getItemCount(transactions);
         BigDecimal initialValue = transactionService.getAmountSum(transactions);
-        Optional<Priceable> price = priceService.getPriceAt(dateTime, asset);
+        Optional<IsPrice> price = priceService.getPriceAt(dateTime, asset);
         StatementOfAsset statement = new StatementOfAsset(asset);
         statement.setItemsCount(itemCount);
         statement.setValue(price.isPresent() ? price.get().getPrice().multiply(itemCount) : initialValue);

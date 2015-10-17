@@ -1,9 +1,9 @@
 package functional;
 
-import ee.golive.finance.domain.Asset;
+import ee.golive.finance.domain.IsAsset;
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.Priceable;
-import ee.golive.finance.domain.Transactional;
+import ee.golive.finance.domain.IsPrice;
+import ee.golive.finance.domain.IsTransaction;
 import ee.golive.finance.helper.DateTimeHelper;
 import ee.golive.finance.math.TimeWeightedReturn;
 import ee.golive.finance.model.SnapshotPeriod;
@@ -30,9 +30,9 @@ public class FunctionalTest {
     ValueService valueService;
     SnapshotService snapshotService;
     PriceService priceService;
-    List<Transactional> transactions;
-    Asset asset;
-    Asset eur;
+    List<IsTransaction> transactions;
+    IsAsset asset;
+    IsAsset eur;
 
     @Before
     public void setUp() {
@@ -56,7 +56,7 @@ public class FunctionalTest {
         assertEquals(new BigDecimal("0.5377"), ttwr.setScale(4, BigDecimal.ROUND_HALF_DOWN));
     }
 
-    private List<Transactional> getTransactions() {
+    private List<IsTransaction> getTransactions() {
         return Arrays.asList(
                 getTransaction(DateTime.parse("2011-02-01"), "1000", "1", FlowType.EXTERNAL, eur), // DEPOSIT
                 getTransaction(DateTime.parse("2011-02-10"), "1000", "20", FlowType.EXTERNAL, asset), // BUY
@@ -70,7 +70,7 @@ public class FunctionalTest {
         );
     }
 
-    private List<Priceable> getPrices() {
+    private List<IsPrice> getPrices() {
         return Arrays.asList(
                 getPrice(DateTime.parse("2011-02-10"), "50", asset),
                 getPrice(DateTime.parse("2011-03-10"), "52.5", asset),
@@ -79,7 +79,7 @@ public class FunctionalTest {
         );
     }
 
-    private Price getPrice(DateTime d, String v, Asset as) {
+    private Price getPrice(DateTime d, String v, IsAsset as) {
         Price price = new Price();
         price.setAsset(as);
         price.setDateTime(d);
@@ -87,7 +87,7 @@ public class FunctionalTest {
         return price;
     }
 
-    private Transaction getTransaction(DateTime d, String a, String c, FlowType f, Asset as) {
+    private Transaction getTransaction(DateTime d, String a, String c, FlowType f, IsAsset as) {
         Transaction transaction = new Transaction();
         transaction.setDateTime(d);
         transaction.setAmount(new BigDecimal(a));

@@ -1,7 +1,7 @@
 package ee.golive.finance.model;
 
 
-import ee.golive.finance.domain.Transactional;
+import ee.golive.finance.domain.IsTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class SnapshotPeriod {
     /**
      * List of transactions that happened between start and end
      */
-    private List<Transactional> transactions;
+    private List<IsTransaction> transactions;
 
     public SnapshotPeriod(Snapshot startSnapshot, Snapshot endSnapshot) {
         this.startSnapshot = startSnapshot;
@@ -41,23 +41,15 @@ public class SnapshotPeriod {
         return startSnapshot;
     }
 
-    public void setStartSnapshot(Snapshot startSnapshot) {
-        this.startSnapshot = startSnapshot;
-    }
-
     public Snapshot getEndSnapshot() {
         return endSnapshot;
     }
 
-    public void setEndSnapshot(Snapshot endSnapshot) {
-        this.endSnapshot = endSnapshot;
-    }
-
-    public List<Transactional> getTransactions() {
+    public List<IsTransaction> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(List<Transactional> transactions) {
+    public void setTransactions(List<IsTransaction> transactions) {
         this.transactions = transactions;
     }
 

@@ -1,16 +1,16 @@
 package functional;
 
-import ee.golive.finance.domain.Asset;
-import ee.golive.finance.domain.Priceable;
+import ee.golive.finance.domain.IsAsset;
+import ee.golive.finance.domain.IsPrice;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
 
-public class Price implements Priceable {
+public class Price implements IsPrice {
 
     private DateTime dateTime;
     private BigDecimal price;
-    private Asset asset;
+    private IsAsset asset;
 
     @Override
     public DateTime getDateTime() {
@@ -31,11 +31,11 @@ public class Price implements Priceable {
     }
 
     @Override
-    public Asset getAsset() {
+    public IsAsset getAsset() {
         return asset;
     }
 
-    public void setAsset(Asset asset) {
+    public void setAsset(IsAsset asset) {
         this.asset = asset;
     }
 }
