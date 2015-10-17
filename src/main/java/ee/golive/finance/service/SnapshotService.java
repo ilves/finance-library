@@ -1,6 +1,6 @@
 package ee.golive.finance.service;
 
-import ee.golive.finance.domain.Transaction;
+import ee.golive.finance.domain.Transactional;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import org.joda.time.DateTime;
@@ -18,6 +18,12 @@ public class SnapshotService {
     private TransactionService transactionService;
     private PortfolioService portfolioService;
 
+    public SnapshotService(PriceService priceService) {
+        this.transactionService = new TransactionService();
+        this.portfolioService = new PortfolioService(priceService, transactionService);
+        this.priceService = priceService;
+    }
+
     public SnapshotService(PriceService priceService, TransactionService transactionService,
                            PortfolioService portfolioService) {
         this.priceService = priceService;
@@ -25,15 +31,15 @@ public class SnapshotService {
         this.portfolioService = portfolioService;
     }
 
-    public Snapshot generateAt(DateTime snapshotDate, List<Transaction> rawTransactions) {
-        List<Transaction> transactions = transactionService.getTransactionsBefore(snapshotDate, rawTransactions);
+    public Snapshot generateAt(DateTime snapshotDate, List<Transactional> rawTransactions) {
+        List<Transactional> transactions = transactionService.getTransactionsBefore(snapshotDate, rawTransactions);
         Snapshot snapshot = new Snapshot(snapshotDate);
         snapshot.setTransactions(transactions);
-        snapshot.setPortfolio(portfolioService.createPortfolio(transactions));
+        snapshot.setPortfolio(portfolioService.createPortfolio(transactions, snapshotDate));
         return snapshot;
     }
 
-    public List<SnapshotPeriod> generateBetween(List<Interval> intervals, List<Transaction> rawTransactions) {
+    public List<SnapshotPeriod> generateBetween(List<Interval> intervals, List<Transactional> rawTransactions) {
         List<SnapshotPeriod> snapshots = new ArrayList<>();
         for(Interval interval: intervals) {
             Snapshot start = generateAt(interval.getStart(), rawTransactions);

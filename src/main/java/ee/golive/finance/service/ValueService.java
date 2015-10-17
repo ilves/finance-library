@@ -1,5 +1,7 @@
 package ee.golive.finance.service;
 
+import ee.golive.finance.domain.FlowType;
+import ee.golive.finance.domain.Transactional;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import ee.golive.finance.model.StatementOfAsset;
@@ -18,10 +20,17 @@ public class ValueService {
     }
 
     public BigDecimal getExternalFlow(SnapshotPeriod period) {
-        return new BigDecimal(0);
+        return sumAmountOfFlowType(period, FlowType.EXTERNAL);
     }
 
     public BigDecimal getInternalFlow(SnapshotPeriod period) {
-        return new BigDecimal(0);
+        return sumAmountOfFlowType(period, FlowType.INTERNAL);
+    }
+
+    private BigDecimal sumAmountOfFlowType(SnapshotPeriod period, FlowType flowType) {
+        return period.getTransactions().stream()
+                .filter(t -> t.getFlowType().equals(flowType))
+                .map(Transactional::getAmount)
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 }

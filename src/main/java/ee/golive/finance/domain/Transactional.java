@@ -7,8 +7,10 @@ import java.math.BigDecimal;
 /**
  * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
  */
-public interface Transaction {
+public interface Transactional {
     public DateTime getDateTime();
     public Asset getAsset();
     public BigDecimal getCount();
+    public FlowType getFlowType();
+    public BigDecimal getAmount();
 }
