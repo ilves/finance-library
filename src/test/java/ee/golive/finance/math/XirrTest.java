@@ -30,7 +30,7 @@ public class XirrTest {
     }
 
     @Test
-    public void testXirrWithPeriod() {
+    public void testXirrWithPeriodForPortfolio() {
         SnapshotPeriod period = mock(SnapshotPeriod.class);
         List<IsTransaction> transactions = getMockTransactions();
         when(period.getTransactions()).thenReturn(transactions);
@@ -39,11 +39,11 @@ public class XirrTest {
         when(start.getValue()).thenReturn(new BigDecimal("6000"));
         Snapshot end = mock(Snapshot.class);
         when(end.getSnapshotDateTime()).thenReturn(new DateTime("2000-05-01"));
-        when(end.getValue()).thenReturn(new BigDecimal("1422"));
+        when(end.getValue()).thenReturn(new BigDecimal("12422"));
         when(period.getStartSnapshot()).thenReturn(start);
         when(period.getEndSnapshot()).thenReturn(end);
         Xirr xirr = new Xirr(period);
-        assertEquals(0.224837, xirr.calculate(), 1e-6);
+        assertEquals(0.404036, xirr.calculate(), 1e-6);
     }
 
     private List<IsTransaction> getMockTransactions() {
@@ -52,7 +52,7 @@ public class XirrTest {
                 getMockTransaction(2134, FlowType.EXTERNAL, new DateTime("1999-04-04")),
                 getMockTransaction(4234.44, FlowType.NONE),
                 getMockTransaction(16.5, FlowType.INTERNAL),
-                getMockTransaction(1422, FlowType.EXTERNAL, new DateTime("1999-05-09")),
+                getMockTransaction(-1422, FlowType.EXTERNAL, new DateTime("1999-05-09")),
                 getMockTransaction(1933, FlowType.EXTERNAL, new DateTime("2000-03-12"))
         );
     }

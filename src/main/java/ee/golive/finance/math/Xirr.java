@@ -32,8 +32,8 @@ public class Xirr {
     public Xirr(SnapshotPeriod period) {
         List<Double> values = new ArrayList<>();
         List<Integer> dates = new ArrayList<>();
-        values.add(-period.getStartSnapshot().getValue().doubleValue());
-        dates.add(Days.daysBetween( EXCEL_DAY_ZERO, period.getStartSnapshot().getSnapshotDateTime()).getDays());
+        values.add(period.getStartSnapshot().getValue().doubleValue());
+        dates.add(Days.daysBetween(EXCEL_DAY_ZERO, period.getStartSnapshot().getSnapshotDateTime()).getDays());
         period.getTransactions()
                 .stream()
                 .filter(t -> t.getFlowType().equals(FlowType.EXTERNAL))
@@ -41,7 +41,7 @@ public class Xirr {
             values.add(t.getAmount().doubleValue());
             dates.add(Days.daysBetween(EXCEL_DAY_ZERO, t.getDateTime()).getDays());
         });
-        values.add(period.getEndSnapshot().getValue().doubleValue());
+        values.add(-period.getEndSnapshot().getValue().doubleValue());
         dates.add(Days.daysBetween(EXCEL_DAY_ZERO, period.getEndSnapshot().getSnapshotDateTime()).getDays());
         this.values = values.stream().mapToDouble(x->x).toArray();
         this.dates = dates.stream().mapToInt(x -> x).toArray();

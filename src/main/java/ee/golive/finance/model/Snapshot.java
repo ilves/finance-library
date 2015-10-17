@@ -33,8 +33,9 @@ public class Snapshot {
      */
     private BigDecimal value;
 
-    public Snapshot(DateTime snapshotDateTime) {
+    public Snapshot(DateTime snapshotDateTime, List<IsTransaction> transactions) {
         this.snapshotDateTime = snapshotDateTime;
+        this.transactions = transactions;
     }
 
     public List<IsTransaction> getTransactions() {

@@ -47,7 +47,7 @@ public class FunctionalTest {
 
     @Test
     public void functionalTestTimeWeighted() {
-        TimeWeightedReturn calculator = new TimeWeightedReturn(valueService);
+        TimeWeightedReturn calculator = new TimeWeightedReturn();
         DateTime start = DateTime.parse("2011-01-01");
         DateTime end = start.plusYears(1);
         List<Interval> intervals = DateTimeHelper.getIntervals(start, end, DateTimeHelper.MONTHLY);

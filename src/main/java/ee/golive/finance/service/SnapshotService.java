@@ -38,8 +38,7 @@ public class SnapshotService {
 
     public Snapshot generateAt(DateTime snapshotDate, List<IsTransaction> rawTransactions) {
         List<IsTransaction> transactions = transactionService.getTransactionsBefore(snapshotDate, rawTransactions);
-        Snapshot snapshot = new Snapshot(snapshotDate);
-        snapshot.setTransactions(transactions);
+        Snapshot snapshot = new Snapshot(snapshotDate, transactions);
         snapshot.setPortfolio(portfolioService.createPortfolio(transactions, snapshotDate));
         snapshot.setValue(valueService.getValue(snapshot));
         return snapshot;
@@ -52,6 +51,8 @@ public class SnapshotService {
             Snapshot end = generateAt(interval.getEnd(), rawTransactions);
             SnapshotPeriod snapshot = new SnapshotPeriod(start, end);
             snapshots.add(snapshot);
+            snapshot.setInternalFlow(valueService.getInternalFlow(snapshot));
+            snapshot.setExternalFlow(valueService.getExternalFlow(snapshot));
         }
         return snapshots;
     }
