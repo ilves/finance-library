@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 
 public class TimeWeightedReturn {
 
-    private static final String logMessage = "Start: %s Flow: %s End: %s HPR: %s";
+    private static final String logMessage = "%s -> Start: %s Flow: %s End: %s HPR: %s";
     private static final Logger logger = Logger.getLogger(TimeWeightedReturn.class.getName());
 
     private final double[][] periods;
@@ -43,7 +43,7 @@ public class TimeWeightedReturn {
     private IntToDoubleFunction HPR() {
         return i -> {
             double hpr = (periods[i][2] - periods[i][1]) / periods[i][0];
-            logger.log(Level.FINE, String.format(logMessage, periods[i][0], periods[i][1], periods[i][2], hpr));
+            logger.log(Level.FINE, String.format(logMessage, i, periods[i][0], periods[i][1], periods[i][2], hpr));
             return hpr;
         };
     }
