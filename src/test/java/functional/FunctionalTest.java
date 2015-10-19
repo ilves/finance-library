@@ -50,12 +50,12 @@ public class FunctionalTest {
 
     @Test
     public void functionalTestTimeWeighted() {
-        TimeWeightedReturn calculator = new TimeWeightedReturn();
         DateTime start = DateTime.parse("2011-01-01");
         DateTime end = start.plusYears(1);
         List<Interval> intervals = DateTimeHelper.getIntervals(start, end, DateTimeHelper.MONTHLY);
         List<SnapshotPeriod> snapshotPeriods = snapshotService.generateBetween(intervals, getTransactions());
-        BigDecimal ttwr = calculator.calculate(snapshotPeriods);
+        TimeWeightedReturn calculator = new TimeWeightedReturn(snapshotPeriods);
+        BigDecimal ttwr = calculator.resultOfBigDecimal();
         assertEquals(new BigDecimal("0.4336"), ttwr.setScale(4, BigDecimal.ROUND_HALF_DOWN));
     }
 
@@ -139,8 +139,8 @@ public class FunctionalTest {
 
         List<SnapshotPeriod> periods = new ArrayList<>();
         periods.add(period);
-        TimeWeightedReturn calc = new TimeWeightedReturn();
-        System.out.println(calc.calculate(periods));
+        TimeWeightedReturn calc = new TimeWeightedReturn(periods);
+        System.out.println(calc.calculate());
     }
 
     private List<IsTransaction> getTest() {

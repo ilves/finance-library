@@ -25,4 +25,10 @@ public class MockHelper {
         when(transaction.getDateTime()).thenReturn(dateTime);
         return transaction;
     }
+
+    public static IsTransaction getMockTransaction(double amount, double count, FlowType flowType, DateTime dateTime) {
+        IsTransaction transaction = getMockTransaction(amount, flowType, dateTime);
+        when(transaction.getCount()).thenReturn(new BigDecimal(count));
+        return transaction;
+    }
 }

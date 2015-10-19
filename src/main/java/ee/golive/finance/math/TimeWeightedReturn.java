@@ -4,17 +4,47 @@ import ee.golive.finance.model.SnapshotPeriod;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.function.IntToDoubleFunction;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 public class TimeWeightedReturn {
 
-    public BigDecimal calculate(List<SnapshotPeriod> periods) {
-        return periods.stream()
-                .filter(p -> p.getStartSnapshot().getValue().compareTo(BigDecimal.ZERO) != 0)
-                .map(p ->
-                        p.getEndSnapshot().getValue()
-                                .subtract(p.getExternalFlow())
-                                .add(p.getInternalFlow())
-                                .divide(p.getStartSnapshot().getValue(), 10, BigDecimal.ROUND_HALF_UP))
-                .reduce(BigDecimal.ONE, (x, y) -> x.multiply(y)).subtract(BigDecimal.ONE);
+    private static final String logMessage = "Start: %s Flow: %s End: %s HPR: %s";
+    private static final Logger logger = Logger.getLogger(TimeWeightedReturn.class.getName());
+
+    private final double[][] periods;
+
+    public TimeWeightedReturn(double[][] periods) {
+        this.periods = periods;
+    }
+
+    public TimeWeightedReturn(List<SnapshotPeriod> periods) {
+        this.periods = periods
+                .stream()
+                .filter(x -> !x.getStartSnapshot().getValue().equals(BigDecimal.ZERO))
+                .map((x) -> new double[]{
+                        x.getStartSnapshot().getValue().doubleValue(),
+                        x.getExternalFlow().subtract(x.getInternalFlow()).doubleValue(),
+                        x.getEndSnapshot().getValue().doubleValue(),
+                })
+                .toArray(double[][]::new);
+    }
+
+    public double calculate() {
+        return IntStream.range(0, periods.length).mapToDouble(HPR()).reduce(1.0, (x, y) -> x*y) - 1.0;
+    }
+
+    public BigDecimal resultOfBigDecimal() {
+        return new BigDecimal(calculate());
+    }
+
+    private IntToDoubleFunction HPR() {
+        return i -> {
+            double hpr = (periods[i][2] - periods[i][1]) / periods[i][0];
+            logger.log(Level.FINE, String.format(logMessage, periods[i][0], periods[i][1], periods[i][2], hpr));
+            return hpr;
+        };
     }
 }

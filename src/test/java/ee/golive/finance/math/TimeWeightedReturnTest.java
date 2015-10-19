@@ -24,32 +24,35 @@ public class TimeWeightedReturnTest {
     public void setUp() {
         service = mock(ValueService.class);
         list = new ArrayList<>();
-        calculator = new TimeWeightedReturn();
     }
 
     @Test
     public void testFormulaOnePeriodNoFlow() {
         list.add(getMockPeriod(50.0, 100.0, 0.0, 0.0));
-        assertEquals(new BigDecimal(1), calculator.calculate(list).setScale(0, BigDecimal.ROUND_HALF_DOWN));
+        calculator = new TimeWeightedReturn(list);
+        assertEquals(1.0, calculator.calculate(), 0.0000001);
     }
 
     @Test
     public void testFormulaOnePeriodWithInFlow() {
         list.add(getMockPeriod(50.0, 100.0, 25.0, 0.0));
-        assertEquals(new BigDecimal(0.5), calculator.calculate(list).setScale(1, BigDecimal.ROUND_HALF_DOWN));
+        calculator = new TimeWeightedReturn(list);
+        assertEquals(0.5, calculator.calculate(), 0.0000001);
     }
 
     @Test
     public void testFormulaOnePeriodWithOutFlow() {
         list.add(getMockPeriod(50.0, 100.0, -25.0, 0.0));
-        assertEquals(new BigDecimal(1.5), calculator.calculate(list).setScale(1, BigDecimal.ROUND_HALF_DOWN));
+        calculator = new TimeWeightedReturn(list);
+        assertEquals(new BigDecimal(1.5), calculator.resultOfBigDecimal().setScale(1, BigDecimal.ROUND_HALF_DOWN));
     }
 
     @Test
     public void testFormulaTwoPeriodsWithOutFlow() {
         list.add(getMockPeriod(50.0, 100.0, 20.0, 0.0));
         list.add(getMockPeriod(100.0, 50.0, 20.0, 0.0));
-        assertEquals(new BigDecimal("-0.52"), calculator.calculate(list).setScale(2, BigDecimal.ROUND_HALF_DOWN));
+        calculator = new TimeWeightedReturn(list);
+        assertEquals(new BigDecimal("-0.52"), calculator.resultOfBigDecimal().setScale(2, BigDecimal.ROUND_HALF_DOWN));
     }
 
     @Test
@@ -57,7 +60,8 @@ public class TimeWeightedReturnTest {
         list.add(getMockPeriod(1000.0, 1300.0, 250.0, 0.0));
         list.add(getMockPeriod(1300.0, 1700.0, 250.0, 0.0));
         list.add(getMockPeriod(1700.0, 1900.0, 0.0, 0.0));
-        assertEquals(new BigDecimal("0.3089"), calculator.calculate(list).setScale(4, BigDecimal.ROUND_HALF_DOWN));
+        calculator = new TimeWeightedReturn(list);
+        assertEquals(new BigDecimal("0.3089"), calculator.resultOfBigDecimal().setScale(4, BigDecimal.ROUND_HALF_DOWN));
     }
 
     @Test
@@ -66,7 +70,8 @@ public class TimeWeightedReturnTest {
         list.add(getMockPeriod(1000.0, 1300.0, 250.0, 0.0));
         list.add(getMockPeriod(1300.0, 1700.0, 250.0, 100.0));
         list.add(getMockPeriod(1700.0, 1900.0, 0.0, 0.0));
-        assertEquals(new BigDecimal("0.3992"), calculator.calculate(list).setScale(4, BigDecimal.ROUND_HALF_DOWN));
+        calculator = new TimeWeightedReturn(list);
+        assertEquals(new BigDecimal("0.3992"), calculator.resultOfBigDecimal().setScale(4, BigDecimal.ROUND_HALF_DOWN));
     }
 
     private SnapshotPeriod getMockPeriod(double start, double end, double ext, double in) {

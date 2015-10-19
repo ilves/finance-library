@@ -38,7 +38,7 @@ public class PortfolioServiceTest {
         when(price.getPrice()).thenReturn(new BigDecimal(37.34));
         when(priceService.getPriceAt(any(), any())).thenReturn(Optional.of(price));
         transactions = Arrays.asList(
-                getMockTransaction(560.1, FlowType.NONE, new DateTime())
+                getMockTransaction(560.1, 15, FlowType.NONE, new DateTime())
         );
     }
 
