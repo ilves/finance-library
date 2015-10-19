@@ -1,5 +1,6 @@
 package ee.golive.finance.service;
 
+import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.IsAsset;
 import ee.golive.finance.domain.IsTransaction;
 import org.joda.time.DateTime;
@@ -20,7 +21,7 @@ public class TransactionService {
      * @param dateTime Date time before the transactions happened
      * @return filtered and sorted list
      */
-    public List<IsTransaction> getTransactionsBefore(DateTime dateTime, List<IsTransaction> transactions) {
+    public List<IsTransaction> getTransactionsBefore(DateTime dateTime, List<? extends IsTransaction> transactions) {
         return transactions
                 .stream()
                 .sorted((x, y) -> x.getDateTime().compareTo(y.getDateTime()))
@@ -28,7 +29,7 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-    public BigDecimal getItemCount(List<IsTransaction> transactions) {
+    public BigDecimal getItemCount(List<? extends IsTransaction> transactions) {
         return transactions
                 .stream()
                 .map(IsTransaction::getCount)
@@ -36,7 +37,7 @@ public class TransactionService {
                 .orElse(BigDecimal.ZERO);
     }
 
-    public BigDecimal getAmountSum(List<IsTransaction> transactions) {
+    public BigDecimal getAmountSum(List<? extends IsTransaction> transactions) {
         return transactions
                 .stream()
                 .map(IsTransaction::getAmount)
@@ -44,9 +45,10 @@ public class TransactionService {
                 .orElse(BigDecimal.ZERO);
     }
 
-    public Map<IsAsset, List<IsTransaction>> groupByAsset(List<IsTransaction> transactions) {
+    public Map<IsAsset, List<IsTransaction>> groupByAsset(List<? extends IsTransaction> transactions) {
         return transactions
                 .stream()
+                .filter(x -> x.getFlowType() != FlowType.INTERNAL)
                 .collect(Collectors.groupingBy(IsTransaction::getAsset));
     }
 }

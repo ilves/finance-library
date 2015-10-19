@@ -1,5 +1,6 @@
 package ee.golive.finance.service;
 
+import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.IsAsset;
 import ee.golive.finance.domain.IsPrice;
 import ee.golive.finance.domain.IsTransaction;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static ee.golive.finance.MockHelper.getMockTransaction;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -24,6 +26,7 @@ public class PortfolioServiceTest {
     PortfolioService portfolioService;
     PriceService priceService;
     TransactionService transactionService;
+    List<IsTransaction> transactions;
 
 
     @Before
@@ -34,13 +37,16 @@ public class PortfolioServiceTest {
         IsPrice price = mock(IsPrice.class);
         when(price.getPrice()).thenReturn(new BigDecimal(37.34));
         when(priceService.getPriceAt(any(), any())).thenReturn(Optional.of(price));
+        transactions = Arrays.asList(
+                getMockTransaction(560.1, FlowType.NONE, new DateTime())
+        );
     }
 
     @Test
     public void testCreateStatementOfAsset() {
         IsAsset asset = mock(IsAsset.class);
         when(transactionService.getItemCount(any())).thenReturn(new BigDecimal(15));
-        StatementOfAsset statement = portfolioService.createStatementOfAsset(asset, new ArrayList<>(), new DateTime());
+        StatementOfAsset statement = portfolioService.createStatementOfAsset(asset, transactions, new DateTime());
         assertEquals(new BigDecimal(15), statement.getItemsCount());
         assertEquals(new BigDecimal("560.10"), statement.getValue().setScale(2, BigDecimal.ROUND_HALF_DOWN));
     }

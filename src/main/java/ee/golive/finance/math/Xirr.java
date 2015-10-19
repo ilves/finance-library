@@ -36,13 +36,18 @@ public class Xirr {
         dates.add(Days.daysBetween(EXCEL_DAY_ZERO, period.getStartSnapshot().getSnapshotDateTime()).getDays());
         period.getTransactions()
                 .stream()
-                .filter(t -> t.getFlowType().equals(FlowType.EXTERNAL))
+                .filter(t -> t.getFlowType() != FlowType.NONE)
                 .forEach(t -> {
-            values.add(t.getAmount().doubleValue());
-            dates.add(Days.daysBetween(EXCEL_DAY_ZERO, t.getDateTime()).getDays());
+                    double amount = t.getAmount().doubleValue();
+                    if (t.getFlowType() == FlowType.INTERNAL) amount*=-1;
+                    values.add(amount);
+                    dates.add(Days.daysBetween(EXCEL_DAY_ZERO, t.getDateTime()).getDays());
         });
         values.add(-period.getEndSnapshot().getValue().doubleValue());
         dates.add(Days.daysBetween(EXCEL_DAY_ZERO, period.getEndSnapshot().getSnapshotDateTime()).getDays());
+
+        values.stream().mapToDouble(x->x).forEach(System.out::println);
+
         this.values = values.stream().mapToDouble(x->x).toArray();
         this.dates = dates.stream().mapToInt(x -> x).toArray();
     }

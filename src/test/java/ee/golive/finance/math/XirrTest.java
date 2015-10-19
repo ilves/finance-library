@@ -48,10 +48,7 @@ public class XirrTest {
 
     private List<IsTransaction> getMockTransactions() {
         return Arrays.asList(
-                getMockTransaction(34.23, FlowType.INTERNAL),
                 getMockTransaction(2134, FlowType.EXTERNAL, new DateTime("1999-04-04")),
-                getMockTransaction(4234.44, FlowType.NONE),
-                getMockTransaction(16.5, FlowType.INTERNAL),
                 getMockTransaction(-1422, FlowType.EXTERNAL, new DateTime("1999-05-09")),
                 getMockTransaction(1933, FlowType.EXTERNAL, new DateTime("2000-03-12"))
         );

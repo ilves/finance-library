@@ -36,7 +36,7 @@ public class SnapshotService {
         this.valueService = valueService;
     }
 
-    public Snapshot generateAt(DateTime snapshotDate, List<IsTransaction> rawTransactions) {
+    public Snapshot generateAt(DateTime snapshotDate, List<? extends IsTransaction> rawTransactions) {
         List<IsTransaction> transactions = transactionService.getTransactionsBefore(snapshotDate, rawTransactions);
         Snapshot snapshot = new Snapshot(snapshotDate, transactions);
         snapshot.setPortfolio(portfolioService.createPortfolio(transactions, snapshotDate));
@@ -44,16 +44,24 @@ public class SnapshotService {
         return snapshot;
     }
 
-    public List<SnapshotPeriod> generateBetween(List<Interval> intervals, List<IsTransaction> rawTransactions) {
+    public List<SnapshotPeriod> generateBetween(List<Interval> intervals, List<? extends IsTransaction> rawTransactions) {
         List<SnapshotPeriod> snapshots = new ArrayList<>();
-        for(Interval interval: intervals) {
-            Snapshot start = generateAt(interval.getStart(), rawTransactions);
-            Snapshot end = generateAt(interval.getEnd(), rawTransactions);
-            SnapshotPeriod snapshot = new SnapshotPeriod(start, end);
-            snapshots.add(snapshot);
-            snapshot.setInternalFlow(valueService.getInternalFlow(snapshot));
-            snapshot.setExternalFlow(valueService.getExternalFlow(snapshot));
+        for (Interval interval : intervals) {
+            snapshots.add(createValuedPeriod(interval, rawTransactions));
         }
         return snapshots;
+    }
+
+    public SnapshotPeriod createValuedPeriod(Interval interval, List<? extends IsTransaction> transactions) {
+        Snapshot start = generateAt(interval.getStart(), transactions);
+        Snapshot end = generateAt(interval.getEnd(), transactions);
+        return createPeriod(start, end);
+    }
+
+    public SnapshotPeriod createPeriod(Snapshot start, Snapshot end) {
+        SnapshotPeriod snapshot = new SnapshotPeriod(start, end);
+        snapshot.setInternalFlow(valueService.getInternalFlow(snapshot));
+        snapshot.setExternalFlow(valueService.getExternalFlow(snapshot));
+        return snapshot;
     }
 }

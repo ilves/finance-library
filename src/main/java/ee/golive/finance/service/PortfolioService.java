@@ -34,13 +34,17 @@ public class PortfolioService {
                 .collect(Collectors.toList());
     }
 
-    public StatementOfAsset createStatementOfAsset(IsAsset asset, List<IsTransaction> transactions, DateTime dateTime) {
+    public StatementOfAsset createStatementOfAsset(IsAsset asset, List<? extends IsTransaction> transactions, DateTime dateTime) {
         BigDecimal itemCount = transactionService.getItemCount(transactions);
         BigDecimal initialValue = transactionService.getAmountSum(transactions);
         Optional<IsPrice> price = priceService.getPriceAt(dateTime, asset);
         StatementOfAsset statement = new StatementOfAsset(asset);
         statement.setItemsCount(itemCount);
         statement.setValue(price.isPresent() ? price.get().getPrice().multiply(itemCount) : initialValue);
+        statement.setValue(transactions.stream().map(t -> {
+            if (t.getDateTime().compareTo(dateTime) >= 0) return t.getAmount();
+            return price.isPresent() ? price.get().getPrice().multiply(t.getCount()) : t.getAmount();
+        }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
         statement.setPrice(price.isPresent() ? price.get().getPrice() : initialValue.divide(itemCount, BigDecimal.ROUND_UP));
         statement.setInitialValue(initialValue);
         return statement;
