@@ -45,7 +45,8 @@ public class PortfolioService {
             if (t.getDateTime().compareTo(dateTime) >= 0) return t.getAmount();
             return price.isPresent() ? price.get().getPrice().multiply(t.getCount()) : t.getAmount();
         }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
-        statement.setPrice(price.isPresent() ? price.get().getPrice() : initialValue.divide(itemCount, BigDecimal.ROUND_UP));
+        if (itemCount.compareTo(BigDecimal.ZERO) > 0)
+            statement.setPrice(price.isPresent() ? price.get().getPrice() : initialValue.divide(itemCount, BigDecimal.ROUND_UP));
         statement.setInitialValue(initialValue);
         return statement;
     }
