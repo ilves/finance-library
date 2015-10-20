@@ -23,7 +23,7 @@ public class TimeWeightedReturn {
     public TimeWeightedReturn(List<SnapshotPeriod> periods) {
         this.periods = periods
                 .stream()
-                .filter(x -> !x.getStartSnapshot().getValue().equals(BigDecimal.ZERO))
+                .filter(x -> !x.getEndSnapshot().getValue().equals(BigDecimal.ZERO))
                 .map((x) -> new double[]{
                         x.getStartSnapshot().getValue().doubleValue(),
                         x.getExternalFlow().subtract(x.getInternalFlow()).doubleValue(),
@@ -43,6 +43,7 @@ public class TimeWeightedReturn {
     private IntToDoubleFunction HPR() {
         return i -> {
             double hpr = (periods[i][2] - periods[i][1]) / periods[i][0];
+            if (!Double.isFinite(hpr)) hpr = 1.0;
             logger.log(Level.FINE, String.format(logMessage, i, periods[i][0], periods[i][1], periods[i][2], hpr));
             return hpr;
         };
