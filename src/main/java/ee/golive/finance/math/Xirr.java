@@ -69,7 +69,10 @@ public class Xirr {
     }
 
     private IntToDoubleFunction dPV(double rate) {
-        return i -> -i*values[i] * Math.pow(rate + 1.0, -((dates[i] - dates[0]) / DAYS_OF_YEAR) - 1);
+        return i -> {
+            double n = (dates[i] - dates[0]) / DAYS_OF_YEAR;
+            return -n * values[i] * Math.pow(rate + 1.0, -n - 1.0);
+        };
     }
 
     private Predicate<IsTransaction> transactionFilter() {

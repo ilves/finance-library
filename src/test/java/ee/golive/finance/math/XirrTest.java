@@ -30,6 +30,14 @@ public class XirrTest {
     }
 
     @Test
+    public void testNull() {
+        double[] values = {1084.64, -87.23, -0.44, 110.0, -107.39, -6.92, -1000.02};
+        int[] dates = {42144, 42155, 42155, 42156, 42185, 42185, 42297};
+        Xirr xirr = new Xirr(values, dates);
+        assertEquals(0.017282, xirr.calculate(), 1e-6);
+    }
+
+    @Test
     public void testXirrWithPeriodForPortfolio() {
         SnapshotPeriod period = mock(SnapshotPeriod.class);
         List<IsTransaction> transactions = getMockTransactions();
