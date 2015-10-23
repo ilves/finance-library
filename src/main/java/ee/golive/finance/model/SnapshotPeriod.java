@@ -78,4 +78,12 @@ public class SnapshotPeriod {
     public void setExternalFlow(BigDecimal externalFlow) {
         this.externalFlow = externalFlow;
     }
+
+    public void setStartSnapshot(Snapshot startSnapshot) {
+        this.startSnapshot = startSnapshot;
+    }
+
+    public void setEndSnapshot(Snapshot endSnapshot) {
+        this.endSnapshot = endSnapshot;
+    }
 }

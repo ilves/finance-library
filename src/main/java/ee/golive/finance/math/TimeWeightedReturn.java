@@ -24,12 +24,20 @@ public class TimeWeightedReturn {
         this.periods = periods
                 .stream()
                 .filter(x -> !x.getEndSnapshot().getValue().equals(BigDecimal.ZERO))
-                .map((x) -> new double[]{
-                        x.getStartSnapshot().getValue().doubleValue(),
-                        x.getExternalFlow().subtract(x.getInternalFlow()).doubleValue(),
-                        x.getEndSnapshot().getValue().doubleValue(),
+                .map((x) -> {
+                    double start = x.getStartSnapshot().getValue().doubleValue();
+                    double flow = x.getExternalFlow().subtract(x.getInternalFlow()).doubleValue();
+                    double end = x.getEndSnapshot().getValue().doubleValue();
+                    if (start == 0) {
+                        start = flow;
+                        flow = 0;
+                    }
+                    return new double[]{
+                            start,
+                            flow,
+                            end,
+                    };
                 })
-                .filter(x -> x[1] != 0.0)
                 .toArray(double[][]::new);
     }
 
@@ -46,6 +54,7 @@ public class TimeWeightedReturn {
             double hpr = (periods[i][2] - periods[i][1]) / periods[i][0];
             if (!Double.isFinite(hpr)) hpr = 1.0;
             logger.log(Level.FINE, String.format(logMessage, i, periods[i][0], periods[i][1], periods[i][2], hpr));
+            System.out.println(String.format(logMessage, i, periods[i][0], periods[i][1], periods[i][2], hpr));
             return hpr;
         };
     }

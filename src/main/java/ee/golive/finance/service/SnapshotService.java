@@ -1,5 +1,6 @@
 package ee.golive.finance.service;
 
+import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.IsTransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
@@ -8,6 +9,7 @@ import org.joda.time.Interval;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
@@ -44,10 +46,10 @@ public class SnapshotService {
         return snapshot;
     }
 
-    public List<SnapshotPeriod> generateBetween(List<Interval> intervals, List<? extends IsTransaction> rawTransactions) {
+    public List<SnapshotPeriod> generateBetween(List<Interval> intervals, List<? extends IsTransaction> transactions) {
         List<SnapshotPeriod> snapshots = new ArrayList<>();
         for (Interval interval : intervals) {
-            snapshots.add(createValuedPeriod(interval, rawTransactions));
+            snapshots.add(createValuedPeriod(interval, transactions));
         }
         return snapshots;
     }
@@ -64,4 +66,25 @@ public class SnapshotService {
         snapshot.setExternalFlow(valueService.getExternalFlow(snapshot));
         return snapshot;
     }
+
+    public List<Interval> getIntervalsForEveryDailyFlow(List<? extends IsTransaction> transactions, DateTime last) {
+        return getIntervalsForEveryDailyFlow(transactions, transactions.get(0).getDateTime(), last);
+    }
+
+    public List<Interval> getIntervalsForEveryDailyFlow(List<? extends IsTransaction> transactions, DateTime start, DateTime last) {
+        List<DateTime> dates = transactions
+                .stream()
+                .filter(x -> !x.getFlowType().equals(FlowType.NONE) && x.getDateTime().compareTo(start) >= 0)
+                .map(x -> x.getDateTime().withTimeAtStartOfDay().plusDays(1))
+                .distinct()
+                .collect(Collectors.toList());
+        dates.add(last);
+        List<Interval> intervals = new ArrayList<>();
+        intervals.add(new Interval(start, dates.get(0)));
+        for (int n = 1; n < dates.size(); n++) {
+            intervals.add(new Interval(dates.get(n-1), dates.get(n)));
+        }
+        return intervals;
+    }
+
 }

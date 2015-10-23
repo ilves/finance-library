@@ -4,7 +4,6 @@ import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.IsAsset;
 import ee.golive.finance.domain.IsPrice;
 import ee.golive.finance.domain.IsTransaction;
-import ee.golive.finance.helper.DateTimeHelper;
 import ee.golive.finance.math.TimeWeightedReturn;
 import ee.golive.finance.math.Xirr;
 import ee.golive.finance.model.Snapshot;
@@ -52,24 +51,26 @@ public class FunctionalTest {
     public void functionalTestTimeWeighted() {
         DateTime start = DateTime.parse("2011-01-01");
         DateTime end = start.plusYears(1);
-        List<Interval> intervals = DateTimeHelper.getIntervals(start, end, DateTimeHelper.MONTHLY);
+
+        List<Interval> intervals =  snapshotService.getIntervalsForEveryDailyFlow(getTransactions(), end);
         List<SnapshotPeriod> snapshotPeriods = snapshotService.generateBetween(intervals, getTransactions());
+
+        intervals.forEach(System.out::println);
+
+
         TimeWeightedReturn calculator = new TimeWeightedReturn(snapshotPeriods);
         BigDecimal ttwr = calculator.resultOfBigDecimal();
-        assertEquals(new BigDecimal("0.4336"), ttwr.setScale(4, BigDecimal.ROUND_HALF_DOWN));
+        assertEquals(new BigDecimal("-0.7122"), ttwr.setScale(4, BigDecimal.ROUND_HALF_DOWN));
     }
 
     private List<IsTransaction> getTransactions() {
         return Arrays.asList(
-                getTransaction(DateTime.parse("2011-02-01"), "1000", "1", FlowType.EXTERNAL, eur), // DEPOSIT
-                getTransaction(DateTime.parse("2011-02-10"), "1000", "20", FlowType.NONE, asset), // BUY
-                getTransaction(DateTime.parse("2011-02-10"), "-1000", "1", FlowType.NONE, eur), // BUY REFERENCE
-                getTransaction(DateTime.parse("2011-03-02"), "250", "1", FlowType.EXTERNAL, eur), // DEPOSIT
+                //getTransaction(DateTime.parse("2010-02-01T09:00:00.000"), "800", "2", FlowType.EXTERNAL, asset), // DEPOSIT
+                getTransaction(DateTime.parse("2011-02-01T09:00:00.000"), "1000", "1", FlowType.EXTERNAL, asset), // DEPOSIT
+                getTransaction(DateTime.parse("2011-03-02T09:00:00.000"), "250", "1", FlowType.EXTERNAL, asset), // DEPOSIT
                 getTransaction(DateTime.parse("2011-03-06"), "100", "20", FlowType.INTERNAL, eur), // DIVIDEND
-                getTransaction(DateTime.parse("2011-04-04"), "250", "1", FlowType.EXTERNAL, eur), // DEPOSIT
-                getTransaction(DateTime.parse("2011-05-04"), "-100", "1", FlowType.EXTERNAL, eur), // WITHDRAWAL
-                getTransaction(DateTime.parse("2011-05-14"), "-100", "5", FlowType.NONE, eur), // SELL
-                getTransaction(DateTime.parse("2011-05-14"), "100", "1", FlowType.NONE, eur) // SELL REFERENCE
+                getTransaction(DateTime.parse("2011-04-04"), "250", "1", FlowType.EXTERNAL, asset), // DEPOSIT
+                getTransaction(DateTime.parse("2011-05-04"), "100", "1", FlowType.EXTERNAL, asset) // DEPOSIT
         );
     }
 
@@ -154,6 +155,8 @@ public class FunctionalTest {
 
     private List<IsPrice> getPrices() {
         return Arrays.asList(
+                getPrice(DateTime.parse("2011-02-01T09:00:00.000"), "30", asset),
+
                 getPrice(DateTime.parse("2011-02-10"), "50", asset),
                 getPrice(DateTime.parse("2011-03-10"), "52.5", asset),
                 getPrice(DateTime.parse("2011-04-10"), "60", asset),
