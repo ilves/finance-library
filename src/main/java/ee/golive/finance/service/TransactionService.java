@@ -48,7 +48,7 @@ public class TransactionService {
     public Map<IsAsset, List<IsTransaction>> groupByAsset(List<? extends IsTransaction> transactions) {
         return transactions
                 .stream()
-                .filter(x -> x.getFlowType() != FlowType.INTERNAL)
+                .filter(x -> !x.getFlowType().equals(FlowType.INTERNAL))
                 .collect(Collectors.groupingBy(IsTransaction::getAsset));
     }
 }
