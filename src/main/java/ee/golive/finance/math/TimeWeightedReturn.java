@@ -29,6 +29,7 @@ public class TimeWeightedReturn {
                         x.getExternalFlow().subtract(x.getInternalFlow()).doubleValue(),
                         x.getEndSnapshot().getValue().doubleValue(),
                 })
+                .filter(x -> x[1] != 0.0)
                 .toArray(double[][]::new);
     }
 
