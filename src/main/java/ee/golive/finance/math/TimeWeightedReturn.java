@@ -54,7 +54,6 @@ public class TimeWeightedReturn {
             double hpr = (periods[i][2] - periods[i][1]) / periods[i][0];
             if (!Double.isFinite(hpr)) hpr = 1.0;
             logger.log(Level.FINE, String.format(logMessage, i, periods[i][0], periods[i][1], periods[i][2], hpr));
-            System.out.println(String.format(logMessage, i, periods[i][0], periods[i][1], periods[i][2], hpr));
             return hpr;
         };
     }
