@@ -34,6 +34,8 @@ public class Xirr {
 
     private int _pos = 0;
 
+    private Double result;
+
     public Xirr(double[] values, int[] dates) {
         this.values = Objects.requireNonNull(values);
         this.dates = Objects.requireNonNull(dates);
@@ -53,7 +55,16 @@ public class Xirr {
 
     public double calculate() {
         NewtonRaphsonMethod newton = new NewtonRaphsonMethod();
-        return newton.solve(NPV(), dNPV(), 0.1);
+        result = newton.solve(NPV(), dNPV(), 0.1);
+        return result;
+    }
+
+    public double getAnnualizedReturn() {
+        return result != null ? result : calculate();
+    }
+
+    public double getTotalReturn() {
+        return Math.pow(1 + getAnnualizedReturn(), (dates[dates.length-1] - dates[0]) / DAYS_OF_YEAR) - 1.0;
     }
 
     private UnaryOperator<Double> NPV() {
