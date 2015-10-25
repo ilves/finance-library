@@ -7,6 +7,9 @@ import org.joda.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
+ */
 public class DateTimeHelper {
 
     public static Period MONTHLY = Period.months(1);

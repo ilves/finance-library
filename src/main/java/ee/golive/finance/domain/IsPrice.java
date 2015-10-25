@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 import java.math.BigDecimal;
 
 /**
- * Created by Taavi on 16.10.2015.
+ * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
  */
 public interface IsPrice {
     BigDecimal getPrice();

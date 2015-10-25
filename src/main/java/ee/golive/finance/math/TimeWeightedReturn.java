@@ -9,6 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
+/**
+ * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
+ */
 public class TimeWeightedReturn {
 
     private static final String logMessage = "%s -> Start: %s Flow: %s End: %s HPR: %s";

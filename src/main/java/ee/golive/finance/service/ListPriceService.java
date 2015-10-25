@@ -7,6 +7,9 @@ import org.joda.time.DateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
+ */
 public class ListPriceService implements PriceService {
 
     List<IsPrice> prices;
