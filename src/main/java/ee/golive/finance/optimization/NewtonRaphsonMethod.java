@@ -1,9 +1,9 @@
-package ee.golive.finance.analyzes;
+package ee.golive.finance.optimization;
 
 import java.util.function.UnaryOperator;
 
 /**
- * This is method for finding successively better approximations to
+ * This is class for finding successively better approximations to
  * the roots (or zeroes) of a real-valued function.
  *
  * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
@@ -29,8 +29,18 @@ public class NewtonRaphsonMethod {
      */
     private double tolerance = 1e-7;
 
+    /**
+     * Creates NewtonRaphsonMethod object using default configuration options.
+     */
     public NewtonRaphsonMethod() {}
 
+    /**
+     * Creates NewtonRaphsonMethod object by providing configuration options.
+     *
+     * @param maxIterations Maximal number of iterations
+     * @param epsilon Result minimal value
+     * @param tolerance Desired accuracy of the result
+     */
     public NewtonRaphsonMethod(int maxIterations , double epsilon, double tolerance) {
         this.maxIterations = maxIterations;
         this.epsilon = epsilon;

@@ -1,6 +1,6 @@
 package functional;
 
-import ee.golive.finance.domain.IsAsset;
+import ee.golive.finance.domain.IAsset;
 
-public class Asset implements IsAsset {
+public class Asset implements IAsset {
 }

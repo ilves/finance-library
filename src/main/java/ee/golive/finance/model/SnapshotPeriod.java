@@ -1,7 +1,7 @@
 package ee.golive.finance.model;
 
 
-import ee.golive.finance.domain.IsTransaction;
+import ee.golive.finance.domain.ITransaction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class SnapshotPeriod {
     /**
      * List of transactions that happened between start and end
      */
-    private List<IsTransaction> transactions;
+    private List<ITransaction> transactions;
 
     private BigDecimal internalFlow;
 
@@ -50,11 +50,11 @@ public class SnapshotPeriod {
         return endSnapshot;
     }
 
-    public List<IsTransaction> getTransactions() {
+    public List<ITransaction> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(List<IsTransaction> transactions) {
+    public void setTransactions(List<ITransaction> transactions) {
         this.transactions = transactions;
     }
 

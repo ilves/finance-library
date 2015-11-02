@@ -1,9 +1,9 @@
 package functional;
 
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.IsAsset;
-import ee.golive.finance.domain.IsPrice;
-import ee.golive.finance.domain.IsTransaction;
+import ee.golive.finance.domain.IAsset;
+import ee.golive.finance.domain.IPrice;
+import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.math.TimeWeightedReturn;
 import ee.golive.finance.math.Xirr;
 import ee.golive.finance.model.Snapshot;
@@ -32,9 +32,9 @@ public class FunctionalTest {
     ValueService valueService;
     SnapshotService snapshotService;
     PriceService priceService;
-    List<IsTransaction> transactions;
-    IsAsset asset;
-    IsAsset eur;
+    List<ITransaction> transactions;
+    IAsset asset;
+    IAsset eur;
 
     @Before
     public void setUp() {
@@ -52,18 +52,15 @@ public class FunctionalTest {
         DateTime start = DateTime.parse("2011-01-01");
         DateTime end = start.plusYears(1);
 
-        List<Interval> intervals =  snapshotService.getIntervalsForEveryDailyFlow(getTransactions(), end);
-        List<SnapshotPeriod> snapshotPeriods = snapshotService.generateBetween(intervals, getTransactions());
-
-        intervals.forEach(System.out::println);
-
+        List<Interval> intervals =  snapshotService.getIntervalsAtFlow(getTransactions(), end);
+        List<SnapshotPeriod> snapshotPeriods = snapshotService.atIntervals(intervals, getTransactions(), true);
 
         TimeWeightedReturn calculator = new TimeWeightedReturn(snapshotPeriods);
         BigDecimal ttwr = calculator.resultOfBigDecimal();
-        assertEquals(new BigDecimal("-0.7122"), ttwr.setScale(4, BigDecimal.ROUND_HALF_DOWN));
+        assertEquals(new BigDecimal("-1.3906"), ttwr.setScale(4, BigDecimal.ROUND_HALF_DOWN));
     }
 
-    private List<IsTransaction> getTransactions() {
+    private List<ITransaction> getTransactions() {
         return Arrays.asList(
                 //getTransaction(DateTime.parse("2010-02-01T09:00:00.000"), "800", "2", FlowType.EXTERNAL, asset), // DEPOSIT
                 getTransaction(DateTime.parse("2011-02-01T09:00:00.000"), "1000", "1", FlowType.EXTERNAL, asset), // DEPOSIT
@@ -76,11 +73,11 @@ public class FunctionalTest {
 
     @Test
     public void functionalTestIrrBond() {
-        List<IsTransaction> list = getBondTest();
+        List<ITransaction> list = getBondTest();
         DateTime start = DateTime.parse("2011-01-01");
         DateTime end = start.plusYears(1);
-        Snapshot snapshotStart = snapshotService.generateAt(start, list);
-        Snapshot snapshotEnd = snapshotService.generateAt(end, list);
+        Snapshot snapshotStart = snapshotService.at(start, list, false);
+        Snapshot snapshotEnd = snapshotService.at(end, list, false);
         SnapshotPeriod period = snapshotService.createPeriod(snapshotStart, snapshotEnd);
         assertEquals(new BigDecimal("1000"), snapshotStart.getValue());
         assertEquals(new BigDecimal("950"), snapshotEnd.getValue());
@@ -88,7 +85,7 @@ public class FunctionalTest {
         assertEquals(new BigDecimal("100"), period.getInternalFlow());
     }
 
-    private List<IsTransaction> getBondTest() {
+    private List<ITransaction> getBondTest() {
         return Arrays.asList(
                 getTransaction(DateTime.parse("2011-01-01"), "1000", "1000", FlowType.EXTERNAL, eur), // BUY
                 getTransaction(DateTime.parse("2011-03-06"), "100", "100", FlowType.INTERNAL, eur), // INTEREST
@@ -98,11 +95,11 @@ public class FunctionalTest {
 
     @Test
     public void functionalTestIrrBondPortfolio() {
-        List<IsTransaction> list = getPortfolioBondTest();
+        List<ITransaction> list = getPortfolioBondTest();
         DateTime start = DateTime.parse("2011-01-01");
         DateTime end = start.plusYears(1);
-        Snapshot snapshotStart = snapshotService.generateAt(start, list);
-        Snapshot snapshotEnd = snapshotService.generateAt(end, list);
+        Snapshot snapshotStart = snapshotService.at(start, list, false);
+        Snapshot snapshotEnd = snapshotService.at(end, list, false);
         SnapshotPeriod period = snapshotService.createPeriod(snapshotStart, snapshotEnd);
         assertEquals(new BigDecimal("900"), snapshotStart.getValue());
         assertEquals(new BigDecimal("500"), snapshotEnd.getValue());
@@ -110,14 +107,14 @@ public class FunctionalTest {
         assertEquals(new BigDecimal("0"), period.getInternalFlow());
     }
 
-    private List<IsTransaction> getPortfolioBondTest() {
+    private List<ITransaction> getPortfolioBondTest() {
         return Arrays.asList(
                 getTransaction(DateTime.parse("2011-01-01"), "900", "900", FlowType.EXTERNAL, eur), // DEPOSIT
-                getTransaction(DateTime.parse("2011-01-01"), "-800", "-800", FlowType.NONE, eur), // BUY
-                getTransaction(DateTime.parse("2011-01-01"), "800", "800", FlowType.NONE, eur), // BUY
-                getTransaction(DateTime.parse("2011-03-06"), "100", "100", FlowType.NONE, eur), // INTEREST
-                getTransaction(DateTime.parse("2011-05-14"), "-30", "-30", FlowType.NONE, eur), // PRINCIPAL
-                getTransaction(DateTime.parse("2011-05-14"), "30", "30", FlowType.NONE, eur), // PRINCIPAL
+                getTransaction(DateTime.parse("2011-01-01"), "-800", "-800", FlowType.OTHER, eur), // BUY
+                getTransaction(DateTime.parse("2011-01-01"), "800", "800", FlowType.OTHER, eur), // BUY
+                getTransaction(DateTime.parse("2011-03-06"), "100", "100", FlowType.OTHER, eur), // INTEREST
+                getTransaction(DateTime.parse("2011-05-14"), "-30", "-30", FlowType.OTHER, eur), // PRINCIPAL
+                getTransaction(DateTime.parse("2011-05-14"), "30", "30", FlowType.OTHER, eur), // PRINCIPAL
                 getTransaction(DateTime.parse("2011-06-01"), "-500", "-500", FlowType.EXTERNAL, eur) // WITHDRAW
 
         );
@@ -125,11 +122,11 @@ public class FunctionalTest {
 
     @Test
     public void test() {
-        List<IsTransaction> list = getTest();
+        List<ITransaction> list = getTest();
         DateTime start = DateTime.parse("2011-01-01");
         DateTime end = start.plusYears(1);
-        Snapshot snapshotStart = snapshotService.generateAt(start, list);
-        Snapshot snapshotEnd = snapshotService.generateAt(end, list);
+        Snapshot snapshotStart = snapshotService.at(start, list, false);
+        Snapshot snapshotEnd = snapshotService.at(end, list, false);
         SnapshotPeriod period = snapshotService.createPeriod(snapshotStart, snapshotEnd);
         assertEquals(new BigDecimal("200"), snapshotStart.getValue());
         assertEquals(new BigDecimal("150"), snapshotEnd.getValue());
@@ -144,7 +141,7 @@ public class FunctionalTest {
         System.out.println(calc.calculate());
     }
 
-    private List<IsTransaction> getTest() {
+    private List<ITransaction> getTest() {
         return Arrays.asList(
                 getTransaction(DateTime.parse("2011-01-01"), "200", "200", FlowType.EXTERNAL, eur), // BUY
                 getTransaction(DateTime.parse("2011-01-30"), "50", "50", FlowType.INTERNAL, eur), // INTEREST
@@ -153,7 +150,7 @@ public class FunctionalTest {
         );
     }
 
-    private List<IsPrice> getPrices() {
+    private List<IPrice> getPrices() {
         return Arrays.asList(
                 getPrice(DateTime.parse("2011-02-01T09:00:00.000"), "30", asset),
 
@@ -164,7 +161,7 @@ public class FunctionalTest {
         );
     }
 
-    private Price getPrice(DateTime d, String v, IsAsset as) {
+    private Price getPrice(DateTime d, String v, IAsset as) {
         Price price = new Price();
         price.setAsset(as);
         price.setDateTime(d);
@@ -172,7 +169,7 @@ public class FunctionalTest {
         return price;
     }
 
-    private Transaction getTransaction(DateTime d, String a, String c, FlowType f, IsAsset as) {
+    private Transaction getTransaction(DateTime d, String a, String c, FlowType f, IAsset as) {
         Transaction transaction = new Transaction();
         transaction.setDateTime(d);
         transaction.setAmount(new BigDecimal(a));

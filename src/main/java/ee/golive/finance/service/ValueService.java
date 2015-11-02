@@ -1,7 +1,7 @@
 package ee.golive.finance.service;
 
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.IsTransaction;
+import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import ee.golive.finance.model.StatementOfAsset;
@@ -30,7 +30,7 @@ public class ValueService {
     private BigDecimal sumAmountOfFlowType(SnapshotPeriod period, FlowType flowType) {
         return period.getTransactions().stream()
                 .filter(t -> t.getFlowType().equals(flowType))
-                .map(IsTransaction::getAmount)
+                .map(ITransaction::getAmount)
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 }

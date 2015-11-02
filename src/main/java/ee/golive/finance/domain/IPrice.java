@@ -5,12 +5,11 @@ import org.joda.time.DateTime;
 import java.math.BigDecimal;
 
 /**
+ * TODO Add class comment and method comments
  * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
  */
-public interface IsTransaction {
+public interface IPrice {
+    BigDecimal getPrice();
     DateTime getDateTime();
-    IsAsset getAsset();
-    BigDecimal getCount();
-    FlowType getFlowType();
-    BigDecimal getAmount();
+    IAsset getAsset();
 }

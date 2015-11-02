@@ -1,8 +1,8 @@
 package ee.golive.finance.service;
 
-import ee.golive.finance.domain.IsAsset;
+import ee.golive.finance.domain.IAsset;
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.IsTransaction;
+import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import ee.golive.finance.model.StatementOfAsset;
@@ -57,19 +57,19 @@ public class ValueServiceTest {
                 valueService.getInternalFlow(snapshot).setScale(2, BigDecimal.ROUND_HALF_UP));
     }
 
-    private List<IsTransaction> getMockTransactions() {
+    private List<ITransaction> getMockTransactions() {
         return Arrays.asList(
                 getMockTransaction(10.6, FlowType.INTERNAL),
                 getMockTransaction(23.30, FlowType.EXTERNAL),
-                getMockTransaction(21.44, FlowType.NONE),
+                getMockTransaction(21.44, FlowType.OTHER),
                 getMockTransaction(16.5, FlowType.INTERNAL),
-                getMockTransaction(63.60, FlowType.NONE),
+                getMockTransaction(63.60, FlowType.OTHER),
                 getMockTransaction(13.23, FlowType.EXTERNAL)
         );
     }
 
     private StatementOfAsset getMockStatement(double count, double price, double value) {
-        StatementOfAsset statement = new StatementOfAsset(mock(IsAsset.class));
+        StatementOfAsset statement = new StatementOfAsset(mock(IAsset.class));
         statement.setPrice(new BigDecimal(price));
         statement.setValue(new BigDecimal(value));
         statement.setItemsCount(new BigDecimal(count));

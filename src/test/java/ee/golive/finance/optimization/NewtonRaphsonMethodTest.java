@@ -1,4 +1,4 @@
-package ee.golive.finance.analyzes;
+package ee.golive.finance.optimization;
 
 import org.junit.Test;
 

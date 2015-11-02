@@ -1,16 +1,16 @@
 package functional;
 
-import ee.golive.finance.domain.IsAsset;
+import ee.golive.finance.domain.IAsset;
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.IsTransaction;
+import ee.golive.finance.domain.ITransaction;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
 
-public class Transaction implements IsTransaction {
+public class Transaction implements ITransaction {
 
     private DateTime dateTime;
-    private IsAsset asset;
+    private IAsset asset;
     private BigDecimal count;
     private FlowType flowType;
     private BigDecimal amount;
@@ -24,11 +24,11 @@ public class Transaction implements IsTransaction {
     }
 
     @Override
-    public IsAsset getAsset() {
+    public IAsset getAsset() {
         return asset;
     }
 
-    public void setAsset(IsAsset asset) {
+    public void setAsset(IAsset asset) {
         this.asset = asset;
     }
 

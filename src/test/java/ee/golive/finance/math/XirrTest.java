@@ -1,7 +1,7 @@
 package ee.golive.finance.math;
 
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.IsTransaction;
+import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import org.joda.time.DateTime;
@@ -40,7 +40,7 @@ public class XirrTest {
     @Test
     public void testXirrWithPeriodForPortfolio() {
         SnapshotPeriod period = mock(SnapshotPeriod.class);
-        List<IsTransaction> transactions = getMockTransactions();
+        List<ITransaction> transactions = getMockTransactions();
         when(period.getTransactions()).thenReturn(transactions);
         Snapshot start = mock(Snapshot.class);
         when(start.getSnapshotDateTime()).thenReturn(new DateTime("1999-01-15"));
@@ -54,7 +54,7 @@ public class XirrTest {
         assertEquals(0.404036, xirr.calculate(), 1e-6);
     }
 
-    private List<IsTransaction> getMockTransactions() {
+    private List<ITransaction> getMockTransactions() {
         return Arrays.asList(
                 getMockTransaction(2134, FlowType.EXTERNAL, new DateTime("1999-04-04")),
                 getMockTransaction(-1422, FlowType.EXTERNAL, new DateTime("1999-05-09")),

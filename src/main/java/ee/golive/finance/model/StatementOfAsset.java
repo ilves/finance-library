@@ -1,6 +1,6 @@
 package ee.golive.finance.model;
 
-import ee.golive.finance.domain.IsAsset;
+import ee.golive.finance.domain.IAsset;
 
 import java.math.BigDecimal;
 
@@ -9,21 +9,21 @@ import java.math.BigDecimal;
  */
 public class StatementOfAsset {
 
-    private IsAsset asset;
+    private IAsset asset;
     private BigDecimal itemsCount;
     private BigDecimal value;
     private BigDecimal price;
     private BigDecimal initialValue;
 
-    public StatementOfAsset(IsAsset asset) {
+    public StatementOfAsset(IAsset asset) {
         this.asset = asset;
     }
 
-    public IsAsset getAsset() {
+    public IAsset getAsset() {
         return asset;
     }
 
-    public void setAsset(IsAsset asset) {
+    public void setAsset(IAsset asset) {
         this.asset = asset;
     }
 

@@ -1,7 +1,7 @@
 package ee.golive.finance.service;
 
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.IsTransaction;
+import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import org.joda.time.DateTime;
@@ -16,47 +16,59 @@ import java.util.stream.Collectors;
  */
 public class SnapshotService {
 
-    private PriceService priceService;
     private TransactionService transactionService;
     private PortfolioService portfolioService;
     private ValueService valueService;
 
     public SnapshotService(PriceService priceService) {
-        this.priceService = priceService;
         this.transactionService = new TransactionService();
         this.portfolioService = new PortfolioService(priceService, transactionService);
         this.valueService = new ValueService();
     }
 
-    public SnapshotService(PriceService priceService,
-                           TransactionService transactionService,
+    public SnapshotService(TransactionService transactionService,
                            PortfolioService portfolioService,
                            ValueService valueService) {
-        this.priceService = priceService;
         this.transactionService = transactionService;
         this.portfolioService = portfolioService;
         this.valueService = valueService;
     }
 
-    public Snapshot generateAt(DateTime snapshotDate, List<? extends IsTransaction> rawTransactions) {
-        List<IsTransaction> transactions = transactionService.getTransactionsBefore(snapshotDate, rawTransactions);
-        Snapshot snapshot = new Snapshot(snapshotDate, transactions);
-        snapshot.setPortfolio(portfolioService.createPortfolio(transactions, snapshotDate));
+    /**
+     * Generates portfolio snapshot at specified date and time (inclusive) using provided transactions.
+     *
+     * @param dateTime Snapshot date and time
+     * @param transactions List of transactions that lead to the dateTime
+     * @param reinvestInternalFlow True if internalFlow is reinvested otherwise false
+     * @return Snapshot object containing portfolio at specified date and time
+     */
+    public Snapshot at(DateTime dateTime, List<? extends ITransaction> transactions, boolean reinvestInternalFlow) {
+        List<ITransaction> filteredTransactions = transactionService.getTransactionsBefore(dateTime, transactions);
+        Snapshot snapshot = new Snapshot(dateTime, filteredTransactions, reinvestInternalFlow);
+        snapshot.setPortfolio(portfolioService.portfolioOf(snapshot));
         snapshot.setValue(valueService.getValue(snapshot));
         return snapshot;
     }
 
-    public List<SnapshotPeriod> generateBetween(List<Interval> intervals, List<? extends IsTransaction> transactions) {
-        List<SnapshotPeriod> snapshots = new ArrayList<>();
-        for (Interval interval : intervals) {
-            snapshots.add(createValuedPeriod(interval, transactions));
-        }
-        return snapshots;
+    /**
+     * Generates List of SnapshotPeriods at specified intervals.
+     *
+     * @param intervals List of intervals
+     * @param transactions List of transactions that lead to the dateTime
+     * @param reinvestInternalFlow True if internalFlow is reinvested otherwise false
+     * @return List of SnapshotPeriod objects
+     */
+    public List<SnapshotPeriod> atIntervals(List<Interval> intervals, List<? extends ITransaction> transactions,
+                                            boolean reinvestInternalFlow) {
+        return intervals.stream()
+                .map(interval -> snapshotPeriod(interval, transactions, reinvestInternalFlow))
+                .collect(Collectors.toList());
     }
 
-    public SnapshotPeriod createValuedPeriod(Interval interval, List<? extends IsTransaction> transactions) {
-        Snapshot start = generateAt(interval.getStart(), transactions);
-        Snapshot end = generateAt(interval.getEnd(), transactions);
+    private SnapshotPeriod snapshotPeriod(Interval interval, List<? extends ITransaction> transactions,
+                                         boolean reinvestInternalFlow) {
+        Snapshot start = at(interval.getStart(), transactions, reinvestInternalFlow);
+        Snapshot end = at(interval.getEnd(), transactions, reinvestInternalFlow);
         return createPeriod(start, end);
     }
 
@@ -67,14 +79,14 @@ public class SnapshotService {
         return snapshot;
     }
 
-    public List<Interval> getIntervalsForEveryDailyFlow(List<? extends IsTransaction> transactions, DateTime last) {
-        return getIntervalsForEveryDailyFlow(transactions, transactions.get(0).getDateTime(), last);
+    public List<Interval> getIntervalsAtFlow(List<? extends ITransaction> transactions, DateTime last) {
+        return getIntervalsAtFlow(transactions, transactions.get(0).getDateTime(), last);
     }
 
-    public List<Interval> getIntervalsForEveryDailyFlow(List<? extends IsTransaction> transactions, DateTime start, DateTime last) {
+    public List<Interval> getIntervalsAtFlow(List<? extends ITransaction> transactions, DateTime start, DateTime last) {
         List<DateTime> dates = transactions
                 .stream()
-                .filter(x -> !x.getFlowType().equals(FlowType.NONE) && x.getDateTime().compareTo(start) >= 0)
+                .filter(x -> !x.getFlowType().equals(FlowType.OTHER) && x.getDateTime().compareTo(start) >= 0)
                 .map(x -> x.getDateTime().withTimeAtStartOfDay().plusDays(1))
                 .distinct()
                 .collect(Collectors.toList());
@@ -86,5 +98,4 @@ public class SnapshotService {
         }
         return intervals;
     }
-
 }

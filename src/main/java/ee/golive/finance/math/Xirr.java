@@ -1,8 +1,8 @@
 package ee.golive.finance.math;
 
-import ee.golive.finance.analyzes.NewtonRaphsonMethod;
+import ee.golive.finance.optimization.NewtonRaphsonMethod;
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.IsTransaction;
+import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.SnapshotPeriod;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -42,14 +42,15 @@ public class Xirr {
     }
 
     public Xirr(SnapshotPeriod period) {
-        List<IsTransaction> transactions = period.getTransactions().stream().filter(transactionFilter()).collect(Collectors.toList());
+        List<ITransaction> transactions = period.getTransactions().stream()
+                .filter(transactionFilter()).collect(Collectors.toList());
         int n = transactions.size()+2;
         values = new double[n];
         dates = new int[n];
-        setDataAt(_pos++, period.getStartSnapshot().getValue().doubleValue(),
+        setAt(_pos++, period.getStartSnapshot().getValue().doubleValue(),
                 Days.daysBetween(EXCEL_DAY_ZERO, period.getStartSnapshot().getSnapshotDateTime()).getDays());
-        transactions.stream().forEach(fillData());
-        setDataAt(_pos, -period.getEndSnapshot().getValue().doubleValue(),
+        transactions.stream().forEach(fillData(period.getStartSnapshot().getReinvestInternalFlow()));
+        setAt(_pos, -period.getEndSnapshot().getValue().doubleValue(),
                 Days.daysBetween(EXCEL_DAY_ZERO, period.getEndSnapshot().getSnapshotDateTime()).getDays());
     }
 
@@ -86,19 +87,19 @@ public class Xirr {
         };
     }
 
-    private Predicate<IsTransaction> transactionFilter() {
-        return x -> !x.getFlowType().equals(FlowType.NONE);
+    private Predicate<ITransaction> transactionFilter() {
+        return x -> !x.getFlowType().equals(FlowType.OTHER);
     }
 
-    private Consumer<IsTransaction> fillData() {
+    private Consumer<ITransaction> fillData(boolean reinvestInternalFlow) {
         return x -> {
             double amount = x.getAmount().doubleValue();
             int day = Days.daysBetween(EXCEL_DAY_ZERO, x.getDateTime()).getDays();
-            setDataAt(_pos++, x.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount, day);
+            setAt(_pos++, !reinvestInternalFlow && x.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount, day);
         };
     }
 
-    private void setDataAt(int i, double amount, int date) {
+    private void setAt(int i, double amount, int date) {
         logger.log(Level.FINE, String.format(logMessage, i, date, amount));
         values[i] = amount;
         dates[i] = date;

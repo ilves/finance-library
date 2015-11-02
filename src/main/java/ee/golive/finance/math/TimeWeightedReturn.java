@@ -29,7 +29,9 @@ public class TimeWeightedReturn {
                 .filter(x -> !x.getEndSnapshot().getValue().equals(BigDecimal.ZERO))
                 .map((x) -> {
                     double start = x.getStartSnapshot().getValue().doubleValue();
-                    double flow = x.getExternalFlow().subtract(x.getInternalFlow()).doubleValue();
+                    double flow = x.getExternalFlow().subtract(
+                            !x.getStartSnapshot().getReinvestInternalFlow() ? x.getInternalFlow() : BigDecimal.ZERO
+                    ).doubleValue();
                     double end = x.getEndSnapshot().getValue().doubleValue();
                     if (start == 0) {
                         start = flow;

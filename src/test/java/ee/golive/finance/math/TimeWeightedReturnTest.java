@@ -75,8 +75,8 @@ public class TimeWeightedReturnTest {
     }
 
     private SnapshotPeriod getMockPeriod(double start, double end, double ext, double in) {
-        Snapshot s = new Snapshot(new DateTime(), new ArrayList<>());
-        Snapshot e = new Snapshot(new DateTime(), new ArrayList<>());
+        Snapshot s = new Snapshot(new DateTime(), new ArrayList<>(), false);
+        Snapshot e = new Snapshot(new DateTime(), new ArrayList<>(), false);
         SnapshotPeriod period = new SnapshotPeriod(s, e);
         s.setValue(new BigDecimal(start));
         e.setValue(new BigDecimal(end));
