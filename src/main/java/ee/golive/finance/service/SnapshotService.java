@@ -101,7 +101,7 @@ public class SnapshotService {
             while (tmp.compareTo(dates.get(n)) >= 0 && n < dates.size()-1) {
                 n++;
             }
-            intervals.add(new Interval(tmp, dates.get(n)));
+            intervals.add(new Interval(tmp, dates.get(n).plusSeconds(1)));
         }
         return intervals;
     }
