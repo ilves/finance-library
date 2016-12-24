@@ -80,6 +80,9 @@ public class SnapshotService {
     }
 
     public List<Interval> getIntervalsAtFlow(List<? extends ITransaction> transactions, DateTime last) {
+        if (transactions.size() < 1) {
+            return new ArrayList<>();
+        }
         return getIntervalsAtFlow(transactions, transactions.get(0).getDateTime(), last);
     }
 
