@@ -97,7 +97,11 @@ public class SnapshotService {
         List<Interval> intervals = new ArrayList<>();
         intervals.add(new Interval(start, dates.get(0)));
         for (int n = 1; n < dates.size(); n++) {
-            intervals.add(new Interval(dates.get(n-1), dates.get(n)));
+            DateTime tmp = dates.get(n-1);
+            while (tmp.compareTo(dates.get(n)) <= 0) {
+                n++;
+            }
+            intervals.add(new Interval(tmp, dates.get(n)));
         }
         return intervals;
     }
