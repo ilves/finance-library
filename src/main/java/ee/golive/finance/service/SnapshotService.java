@@ -7,6 +7,7 @@ import ee.golive.finance.model.SnapshotPeriod;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class SnapshotService {
         List<ITransaction> filteredTransactions = transactionService.getTransactionsBefore(dateTime, transactions);
         Snapshot snapshot = new Snapshot(dateTime, filteredTransactions, reinvestInternalFlow);
         snapshot.setPortfolio(portfolioService.portfolioOf(snapshot));
-        snapshot.setValue(valueService.getValue(snapshot));
+        snapshot.setValue(valueService.getValue(snapshot).setScale(2, BigDecimal.ROUND_HALF_DOWN));
         return snapshot;
     }
 
