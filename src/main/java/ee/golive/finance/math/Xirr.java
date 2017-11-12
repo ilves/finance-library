@@ -57,7 +57,7 @@ public class Xirr {
     public double calculate() {
         NewtonRaphsonMethod newton = new NewtonRaphsonMethod();
         result = newton.solve(NPV(), dNPV(), 0.1);
-        return result;
+        return result == null ? 0 : result;
     }
 
     public double getAnnualizedReturn() {
