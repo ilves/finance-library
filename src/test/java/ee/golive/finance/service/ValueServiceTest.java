@@ -6,15 +6,18 @@ import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import ee.golive.finance.model.StatementOfAsset;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static ee.golive.finance.MockHelper.getMockTransaction;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,10 +27,14 @@ import static org.mockito.Mockito.when;
 public class ValueServiceTest {
 
     ValueService valueService;
+    PriceService priceService;
 
     @Before
     public void setUp() {
-        valueService = new ValueService();
+        priceService = mock(PriceService.class);
+        valueService = new ValueService(priceService);
+
+        when(priceService.getPriceAt(any(DateTime.class), any(IAsset.class))).thenReturn(Optional.empty());
     }
 
     @Test

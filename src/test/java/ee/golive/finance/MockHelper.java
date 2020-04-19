@@ -17,6 +17,7 @@ public class MockHelper {
     public static ITransaction getMockTransaction(double amount, FlowType flowType) {
         ITransaction transaction = mock(ITransaction.class);
         when(transaction.getAmount()).thenReturn(new BigDecimal(amount));
+        when(transaction.getCount()).thenReturn(new BigDecimal(amount));
         when(transaction.getFlowType()).thenReturn(flowType);
         return transaction;
     }

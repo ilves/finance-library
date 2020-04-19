@@ -24,15 +24,7 @@ public class SnapshotService {
     public SnapshotService(PriceService priceService) {
         this.transactionService = new TransactionService();
         this.portfolioService = new PortfolioService(priceService, transactionService);
-        this.valueService = new ValueService();
-    }
-
-    public SnapshotService(TransactionService transactionService,
-                           PortfolioService portfolioService,
-                           ValueService valueService) {
-        this.transactionService = transactionService;
-        this.portfolioService = portfolioService;
-        this.valueService = valueService;
+        this.valueService = new ValueService(priceService);
     }
 
     /**

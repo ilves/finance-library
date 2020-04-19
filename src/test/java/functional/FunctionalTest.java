@@ -41,7 +41,7 @@ public class FunctionalTest {
         asset = new functional.Asset();
         eur = new functional.Asset();
 
-        valueService = new ValueService();
+        valueService = new ValueService(priceService);
         priceService = new ListPriceService(getPrices());
         snapshotService = new SnapshotService(priceService);
         transactions = getTransactions();

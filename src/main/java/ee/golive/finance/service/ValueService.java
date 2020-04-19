@@ -1,7 +1,6 @@
 package ee.golive.finance.service;
 
 import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import ee.golive.finance.model.StatementOfAsset;
@@ -12,6 +11,12 @@ import java.math.BigDecimal;
  * @author Taavi Ilves, Golive, ilves.taavi@gmail.com
  */
 public class ValueService {
+
+    private PriceService priceService;
+
+    public ValueService(PriceService priceService) {
+        this.priceService = priceService;
+    }
 
     public BigDecimal getValue(Snapshot snapshot) {
         return snapshot.getPortfolio().stream()
@@ -30,7 +35,10 @@ public class ValueService {
     private BigDecimal sumAmountOfFlowType(SnapshotPeriod period, FlowType flowType) {
         return period.getTransactions().stream()
                 .filter(t -> t.getFlowType().equals(flowType))
-                .map(ITransaction::getAmount)
+                .map(t -> {
+                    BigDecimal price = priceService.getPriceAt(t.getDateTime(), t.getAsset()).orElse(BigDecimal.ONE);
+                    return price.multiply(t.getCount());
+                })
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 }
