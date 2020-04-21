@@ -4,11 +4,11 @@ import ee.golive.finance.optimization.NewtonRaphsonMethod;
 import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.SnapshotPeriod;
+import javafx.util.Pair;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.Predicate;
@@ -42,16 +42,30 @@ public class Xirr {
     }
 
     public Xirr(SnapshotPeriod period) {
-        List<ITransaction> transactions = period.getTransactions().stream()
-                .filter(transactionFilter()).collect(Collectors.toList());
-        int n = transactions.size()+2;
-        values = new double[n];
-        dates = new int[n];
-        setAt(_pos++, period.getStartSnapshot().getValue().doubleValue(),
-                Days.daysBetween(EXCEL_DAY_ZERO, period.getStartSnapshot().getSnapshotDateTime()).getDays());
-        transactions.stream().forEach(fillData(period.getStartSnapshot().getReinvestInternalFlow()));
-        setAt(_pos, -period.getEndSnapshot().getValue().doubleValue(),
-                Days.daysBetween(EXCEL_DAY_ZERO, period.getEndSnapshot().getSnapshotDateTime()).getDays());
+        boolean reinvestInternalFlow = period.getStartSnapshot().getReinvestInternalFlow();
+        List<Pair<Integer, Double>> data = new LinkedList<>();
+
+        data.add(new Pair<>(
+                Days.daysBetween(EXCEL_DAY_ZERO, period.getStartSnapshot().getSnapshotDateTime()).getDays(),
+                period.getStartSnapshot().getValue().doubleValue()));
+
+        data.addAll(period.getTransactions().stream()
+                .filter(transactionFilter())
+                .map(t -> {
+                    double amount = t.getAmount().doubleValue();
+                    return new Pair<>(
+                            Days.daysBetween(EXCEL_DAY_ZERO, t.getDateTime()).getDays(),
+                            !reinvestInternalFlow && t.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount);
+                }).collect(Collectors.toList()));
+
+        data.add(new Pair<>(
+                Days.daysBetween(EXCEL_DAY_ZERO, period.getEndSnapshot().getSnapshotDateTime()).getDays(),
+                -period.getEndSnapshot().getValue().doubleValue()));
+
+        data = data.stream().filter(p -> Math.abs(p.getValue()) != 0).collect(Collectors.toList());
+
+        values = data.stream().mapToDouble(Pair::getValue).toArray();
+        dates = data.stream().mapToInt(Pair::getKey).toArray();
     }
 
     public double calculate() {
