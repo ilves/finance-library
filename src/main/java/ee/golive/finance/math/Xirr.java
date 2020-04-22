@@ -58,11 +58,11 @@ public class Xirr {
                             !reinvestInternalFlow && t.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount);
                 }).collect(Collectors.toList()));
 
+        data = data.stream().filter(p -> Math.abs(p.getValue()) != 0).collect(Collectors.toList());
+
         data.add(new Pair<>(
                 Days.daysBetween(EXCEL_DAY_ZERO, period.getEndSnapshot().getSnapshotDateTime()).getDays(),
                 -period.getEndSnapshot().getValue().doubleValue()));
-
-        data = data.stream().filter(p -> Math.abs(p.getValue()) != 0).collect(Collectors.toList());
 
         values = data.stream().mapToDouble(Pair::getValue).toArray();
         dates = data.stream().mapToInt(Pair::getKey).toArray();
