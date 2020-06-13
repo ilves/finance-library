@@ -35,10 +35,7 @@ public class ValueService {
     private BigDecimal sumAmountOfFlowType(SnapshotPeriod period, FlowType flowType) {
         return period.getTransactions().stream()
                 .filter(t -> t.getFlowType().equals(flowType))
-                .map(t -> {
-                    BigDecimal price = priceService.getPriceAt(t.getDateTime(), t.getAsset()).orElse(BigDecimal.ONE);
-                    return price.multiply(t.getCount());
-                })
+                .map(t -> priceService.getValue(t).orElse(t.getCount()))
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 }
