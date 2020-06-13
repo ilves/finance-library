@@ -2,6 +2,7 @@ package ee.golive.finance.service;
 
 import ee.golive.finance.domain.IAsset;
 import ee.golive.finance.domain.IPrice;
+import ee.golive.finance.domain.ITransaction;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
@@ -26,5 +27,10 @@ public class ListPriceService implements PriceService {
                 .sorted((b, a) -> a.getDateTime().compareTo(b.getDateTime()))
                 .map(IPrice::getPrice)
                 .findFirst();
+    }
+
+    @Override
+    public Optional<BigDecimal> getValue(ITransaction transaction) {
+        return Optional.empty();
     }
 }
