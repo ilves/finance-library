@@ -44,31 +44,30 @@ public class Xirr {
 
     public Xirr(SnapshotPeriod period) {
         boolean reinvestInternalFlow = period.getStartSnapshot().getReinvestInternalFlow();
-        List<Pair<Integer, Double>> data = new LinkedList<>();
+        final List<Pair<Integer, Double>> data = new LinkedList<>();
 
         data.add(new MutablePair<>(
                 Days.daysBetween(EXCEL_DAY_ZERO, period.getStartSnapshot().getSnapshotDateTime()).getDays(),
                 period.getStartSnapshot().getValue().doubleValue()));
 
-        List<MutablePair<Integer, Double>> toAdd = period.getTransactions().stream()
+        period.getTransactions().stream()
                 .filter(transactionFilter())
-                .map(t -> {
+                .forEach(t -> {
                     double amount = t.getAmount().doubleValue();
-                    return new MutablePair(
+                    data.add(new MutablePair<>(
                             Days.daysBetween(EXCEL_DAY_ZERO, t.getDateTime()).getDays(),
-                            !reinvestInternalFlow && t.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount);
-                }).collect(Collectors.toList());
+                            !reinvestInternalFlow && t.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount));
+                });
 
-        data.addAll(toAdd);
 
-        data = data.stream().filter(p -> Math.abs(p.getValue()) != 0).collect(Collectors.toList());
+        List<Pair<Integer, Double>> filteredData = data.stream().filter(p -> Math.abs(p.getValue()) != 0).collect(Collectors.toList());
 
-        data.add(new MutablePair<>(
+        filteredData.add(new MutablePair<>(
                 Days.daysBetween(EXCEL_DAY_ZERO, period.getEndSnapshot().getSnapshotDateTime()).getDays(),
                 -period.getEndSnapshot().getValue().doubleValue()));
 
-        values = data.stream().mapToDouble(Pair::getValue).toArray();
-        dates = data.stream().mapToInt(Pair::getKey).toArray();
+        values = filteredData.stream().mapToDouble(Pair::getValue).toArray();
+        dates = filteredData.stream().mapToInt(Pair::getKey).toArray();
     }
 
     public double calculate() {
