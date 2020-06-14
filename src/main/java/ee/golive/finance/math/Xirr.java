@@ -4,7 +4,8 @@ import ee.golive.finance.optimization.NewtonRaphsonMethod;
 import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.SnapshotPeriod;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -45,22 +46,24 @@ public class Xirr {
         boolean reinvestInternalFlow = period.getStartSnapshot().getReinvestInternalFlow();
         List<Pair<Integer, Double>> data = new LinkedList<>();
 
-        data.add(new Pair<>(
+        data.add(new MutablePair<>(
                 Days.daysBetween(EXCEL_DAY_ZERO, period.getStartSnapshot().getSnapshotDateTime()).getDays(),
                 period.getStartSnapshot().getValue().doubleValue()));
 
-        data.addAll(period.getTransactions().stream()
+        List<MutablePair<Integer, Double>> toAdd = period.getTransactions().stream()
                 .filter(transactionFilter())
                 .map(t -> {
                     double amount = t.getAmount().doubleValue();
-                    return new Pair<>(
+                    return new MutablePair(
                             Days.daysBetween(EXCEL_DAY_ZERO, t.getDateTime()).getDays(),
                             !reinvestInternalFlow && t.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount);
-                }).collect(Collectors.toList()));
+                }).collect(Collectors.toList());
+
+        data.addAll(toAdd);
 
         data = data.stream().filter(p -> Math.abs(p.getValue()) != 0).collect(Collectors.toList());
 
-        data.add(new Pair<>(
+        data.add(new MutablePair<>(
                 Days.daysBetween(EXCEL_DAY_ZERO, period.getEndSnapshot().getSnapshotDateTime()).getDays(),
                 -period.getEndSnapshot().getValue().doubleValue()));
 
