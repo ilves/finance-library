@@ -12,5 +12,6 @@ import java.util.Optional;
  */
 public interface PriceService {
     Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset);
+    Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset, boolean local);
     Optional<BigDecimal> getValue(ITransaction transaction);
 }
