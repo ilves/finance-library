@@ -21,6 +21,13 @@ public class ListPriceService implements PriceService {
         this.prices = prices;
     }
 
+    public Optional<? extends IPrice> findPrice(DateTime dateTime, IAsset asset) {
+        DateTime compareDate = dateTime.plusDays(1).withTimeAtStartOfDay().minusSeconds(1);
+        return prices.stream()
+                .filter(price -> price.getAsset().equals(asset) && price.getDateTime().compareTo(compareDate) <= 0)
+                .max(Comparator.comparing(IPrice::getDateTime));
+    }
+
     @Override
     public Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset) {
         return getPriceAt(dateTime, asset, false);
@@ -32,10 +39,7 @@ public class ListPriceService implements PriceService {
             return Optional.of(BigDecimal.valueOf(1d));
         }
 
-        DateTime compareDate = dateTime.plusDays(1).withTimeAtStartOfDay().minusSeconds(1);
-        Optional<? extends IPrice> value = prices.stream()
-                .filter(price -> price.getAsset().equals(asset) && price.getDateTime().compareTo(compareDate) <= 0)
-                .max(Comparator.comparing(IPrice::getDateTime));
+        Optional<? extends IPrice> value = findPrice(dateTime, asset);
 
         if (!value.isPresent()) {
             return Optional.of(BigDecimal.valueOf(1d));
