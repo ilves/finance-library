@@ -28,7 +28,7 @@ public class ListPriceService implements PriceService {
 
     @Override
     public Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset, boolean baseCurrency) {
-        if (asset.getType().equals(IAsset.AssetType.CURRENCY) && !baseCurrency) {
+        if (asset.getType().equals(IAsset.AssetType.CURRENCY) && (!baseCurrency || asset.isBaseCurrency())) {
             return Optional.of(BigDecimal.valueOf(1d));
         }
 
