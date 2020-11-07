@@ -15,9 +15,9 @@ import java.util.Optional;
  */
 public class ListPriceService implements PriceService {
 
-    private List<IPrice> prices;
+    private List<? extends IPrice> prices;
 
-    public ListPriceService(List<IPrice> prices) {
+    public ListPriceService(List<? extends IPrice> prices) {
         this.prices = prices;
     }
 
@@ -33,7 +33,7 @@ public class ListPriceService implements PriceService {
         }
 
         DateTime compareDate = dateTime.plusDays(1).withTimeAtStartOfDay().minusSeconds(1);
-        Optional<IPrice> value = prices.stream()
+        Optional<? extends IPrice> value = prices.stream()
                 .filter(price -> price.getAsset().equals(asset) && price.getDateTime().compareTo(compareDate) <= 0)
                 .max(Comparator.comparing(IPrice::getDateTime));
 
