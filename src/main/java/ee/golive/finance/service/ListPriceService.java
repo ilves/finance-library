@@ -38,7 +38,7 @@ public class ListPriceService implements PriceService {
                 .max(Comparator.comparing(IPrice::getDateTime));
 
         if (!value.isPresent()) {
-            return Optional.empty();
+            return Optional.of(BigDecimal.valueOf(1d));
         } else  if (baseCurrency && !asset.getType().equals(IAsset.AssetType.CURRENCY)) {
             return Optional.of(getPriceAt(dateTime, value.get().getCurrency(), true).orElse(BigDecimal.ONE).multiply(value.get().getPrice()));
         }
