@@ -80,8 +80,8 @@ public class PortfolioService {
      * @return created StatementOfAsset
      */
     private StatementOfAsset statement(IAsset asset, List<? extends ITransaction> transactions, DateTime dateTime) {
-        Optional<BigDecimal> price = priceService.getPriceAt(dateTime, asset, false);
-        Optional<BigDecimal> basePrice = priceService.getPriceAt(dateTime, asset, true);
+        Optional<PriceService.PriceResult> price = priceService.getPriceAt(dateTime, asset, false);
+        Optional<PriceService.PriceResult> basePrice = priceService.getPriceAt(dateTime, asset, true);
         BigDecimal count = transactionService.sumCount(transactions);
         BigDecimal value = transactionService.sumAmount(transactions);
         Supplier<BigDecimal> defaultPrice = () -> value.divide(count.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : count, RoundingMode.HALF_EVEN);
@@ -89,10 +89,11 @@ public class PortfolioService {
         return StatementOfAsset.builder()
             .asset(asset)
             .count(count)
-            .value(price.map(bigDecimal -> bigDecimal.multiply(count)).orElse(count))
-            .baseValue(basePrice.map(bigDecimal -> bigDecimal.multiply(count)).orElse(count))
-            .price(price.orElseGet(defaultPrice))
-            .basePrice(basePrice.orElseGet(defaultPrice))
+            .value(price.map(result -> result.price.multiply(count)).orElse(count))
+            .baseValue(basePrice.map(result -> result.price.multiply(count)).orElse(count))
+            .price(price.isPresent() ? price.get().price : defaultPrice.get())
+            .basePrice(basePrice.isPresent() ? basePrice.get().price : defaultPrice.get())
+            .currency(price.map(PriceService.PriceResult::getCurrency).orElse(null))
             .build();
     }
 }

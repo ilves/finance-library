@@ -18,4 +18,5 @@ public class StatementOfAsset {
     private BigDecimal basePrice;
     private BigDecimal value;
     private BigDecimal baseValue;
+    private IAsset currency;
 }

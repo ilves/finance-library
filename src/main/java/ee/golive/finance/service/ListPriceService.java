@@ -16,9 +16,18 @@ import java.util.Optional;
 public class ListPriceService implements PriceService {
 
     private List<? extends IPrice> prices;
+    private IAsset baseCurrency;
 
     public ListPriceService(List<? extends IPrice> prices) {
         this.prices = prices;
+    }
+
+    public IAsset getBaseCurrency () {
+        if (baseCurrency == null) {
+            baseCurrency = prices.stream().map(IPrice::getCurrency).filter(IAsset::isBaseCurrency).findFirst().orElse(null);
+        }
+
+        return baseCurrency;
     }
 
     public Optional<? extends IPrice> findPrice(DateTime dateTime, IAsset asset) {
@@ -29,25 +38,26 @@ public class ListPriceService implements PriceService {
     }
 
     @Override
-    public Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset) {
-        return getPriceAt(dateTime, asset, false);
-    }
-
-    @Override
-    public Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset, boolean baseCurrency) {
+    public Optional<PriceResult> getPriceAt(DateTime dateTime, IAsset asset, boolean baseCurrency) {
         if (asset.getType().equals(IAsset.AssetType.CURRENCY) && (!baseCurrency || asset.isBaseCurrency())) {
-            return Optional.of(BigDecimal.valueOf(1d));
+            return Optional.of(PriceResult.builder().price(BigDecimal.ONE).currency(asset).build());
         }
 
         Optional<? extends IPrice> value = findPrice(dateTime, asset);
 
         if (!value.isPresent()) {
-            return Optional.of(BigDecimal.valueOf(1d));
+            return Optional.of(PriceResult.builder().price(BigDecimal.ONE).currency(getBaseCurrency()).build());
         } else  if (baseCurrency && !asset.getType().equals(IAsset.AssetType.CURRENCY) && !value.get().getCurrency().isBaseCurrency()) {
-            return Optional.of(getPriceAt(dateTime, value.get().getCurrency(), true).orElse(BigDecimal.ONE).multiply(value.get().getPrice()));
+            BigDecimal price = getPriceAt(dateTime, value.get().getCurrency(), true).orElse(PriceResult.builder().price(BigDecimal.ONE).build()).price;
+
+            return Optional.of(PriceResult.builder()
+                    .price(price.multiply(value.get().getPrice()))
+                    .currency(getBaseCurrency())
+                    .build()
+            );
         }
 
-        return value.map(IPrice::getPrice);
+        return Optional.of(PriceResult.builder().price(value.get().getPrice()).currency(value.get().getCurrency()).build());
     }
 
     @Override

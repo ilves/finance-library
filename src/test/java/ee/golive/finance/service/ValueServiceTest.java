@@ -19,6 +19,7 @@ import java.util.Optional;
 import static ee.golive.finance.MockHelper.getMockTransaction;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,7 +36,7 @@ public class ValueServiceTest {
         priceService = mock(PriceService.class);
         valueService = new ValueService(priceService);
 
-        when(priceService.getPriceAt(any(DateTime.class), any(IAsset.class))).thenReturn(Optional.empty());
+        when(priceService.getPriceAt(any(DateTime.class), any(IAsset.class), anyBoolean())).thenReturn(Optional.empty());
         when(priceService.getValue(any(Transaction.class))).thenReturn(Optional.empty());
     }
 
