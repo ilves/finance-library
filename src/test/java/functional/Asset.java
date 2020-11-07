@@ -8,6 +8,5 @@ import lombok.Data;
 @Data
 public class Asset implements IAsset {
     private String name;
-    private IAsset currency;
     private AssetType type;
 }

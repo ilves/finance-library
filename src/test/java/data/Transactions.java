@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Transactions {
-    private static Asset EUR = Asset.builder().name("Euro").currency(null).type(IAsset.AssetType.CURRENCY).build();
-    private static Asset USD = Asset.builder().name("Dollar").currency(EUR).type(IAsset.AssetType.CURRENCY).build();
-    private static Asset STOCK_1 = Asset.builder().name("Stock 1").currency(USD).type(IAsset.AssetType.ASSET).build();
-    private static Asset STOCK_2 = Asset.builder().name("Stock 2").currency(EUR).type(IAsset.AssetType.ASSET).build();
+    private static Asset EUR = Asset.builder().name("Euro").type(IAsset.AssetType.CURRENCY).build();
+    private static Asset USD = Asset.builder().name("Dollar").type(IAsset.AssetType.CURRENCY).build();
+    private static Asset STOCK_1 = Asset.builder().name("Stock 1").type(IAsset.AssetType.ASSET).build();
+    private static Asset STOCK_2 = Asset.builder().name("Stock 2").type(IAsset.AssetType.ASSET).build();
 
     public static List<ITransaction> getTransactions() {
         List<ITransaction> transactions = new ArrayList<>();
@@ -46,11 +46,11 @@ public class Transactions {
 
     public static List<IPrice> getPrices() {
         List<IPrice> prices = new ArrayList<>();
-        prices.add(Price.builder().asset(USD).dateTime(DateTime.parse("2020-02-01")).price(new BigDecimal("0.90909")).build());
-        prices.add(Price.builder().asset(USD).dateTime(DateTime.parse("2020-02-28")).price(new BigDecimal("0.8")).build());
-        prices.add(Price.builder().asset(STOCK_1).dateTime(DateTime.parse("2020-03-01")).price(new BigDecimal("10.0")).build());
-        prices.add(Price.builder().asset(STOCK_1).dateTime(DateTime.parse("2020-03-02")).price(new BigDecimal("20.0")).build());
-        prices.add(Price.builder().asset(STOCK_2).dateTime(DateTime.parse("2020-04-01")).price(new BigDecimal("4.0")).build());
+        prices.add(Price.builder().asset(USD).currency(EUR).dateTime(DateTime.parse("2020-02-01")).price(new BigDecimal("0.90909")).build());
+        prices.add(Price.builder().asset(USD).currency(EUR).dateTime(DateTime.parse("2020-02-28")).price(new BigDecimal("0.8")).build());
+        prices.add(Price.builder().asset(STOCK_1).currency(USD).dateTime(DateTime.parse("2020-03-01")).price(new BigDecimal("10.0")).build());
+        prices.add(Price.builder().asset(STOCK_1).currency(USD).dateTime(DateTime.parse("2020-03-02")).price(new BigDecimal("20.0")).build());
+        prices.add(Price.builder().asset(STOCK_2).currency(EUR).dateTime(DateTime.parse("2020-04-01")).price(new BigDecimal("4.0")).build());
 
         return prices;
     }

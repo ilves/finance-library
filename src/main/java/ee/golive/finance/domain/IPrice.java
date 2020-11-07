@@ -12,4 +12,5 @@ public interface IPrice {
     BigDecimal getPrice();
     DateTime getDateTime();
     IAsset getAsset();
+    IAsset getCurrency();
 }
