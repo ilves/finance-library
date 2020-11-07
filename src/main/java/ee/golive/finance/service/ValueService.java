@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 public class ValueService {
 
-    private PriceService priceService;
+    private final PriceService priceService;
 
     public ValueService(PriceService priceService) {
         this.priceService = priceService;

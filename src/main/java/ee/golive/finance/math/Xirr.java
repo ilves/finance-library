@@ -43,7 +43,6 @@ public class Xirr {
     }
 
     public Xirr(SnapshotPeriod period) {
-        boolean reinvestInternalFlow = period.getStartSnapshot().getReinvestInternalFlow();
         final List<Pair<Integer, Double>> data = new LinkedList<>();
 
         data.add(new MutablePair<>(
@@ -56,7 +55,7 @@ public class Xirr {
                     double amount = t.getAmount().doubleValue();
                     data.add(new MutablePair<>(
                             Days.daysBetween(EXCEL_DAY_ZERO, t.getDateTime()).getDays(),
-                            !reinvestInternalFlow && t.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount));
+                            t.getFlowType().equals(FlowType.INTERNAL) ? -amount : amount));
                 });
 
 

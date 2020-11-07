@@ -2,7 +2,6 @@ package ee.golive.finance.service;
 
 import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.IAsset;
-import ee.golive.finance.domain.IPrice;
 import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.StatementOfAsset;
@@ -26,22 +25,12 @@ public class PortfolioService {
     /**
      * Price service for assets valuation
      */
-    private PriceService priceService;
+    private final PriceService priceService;
 
     /**
      * Transaction service for transaction related methods
      */
-    private TransactionService transactionService;
-
-    /**
-     * Initiates portfolio service using provided PriceService and default TransactionService
-     * implementation
-     *
-     * @param priceService PriceService for asset pricing
-     */
-    public PortfolioService(PriceService priceService) {
-        this(priceService, new TransactionService());
-    }
+    private final TransactionService transactionService;
 
     /**
      * Initiates portfolio service using provided PriceService and TransactionService
@@ -61,8 +50,7 @@ public class PortfolioService {
      * @return  List of StatementOfAssets
      */
     public List<StatementOfAsset> portfolioOf(Snapshot snapshot) {
-        return portfolioAt(snapshot.getSnapshotDateTime(), snapshot.getTransactions(),
-                snapshot.getReinvestInternalFlow());
+        return portfolioAt(snapshot.getSnapshotDateTime(), snapshot.getTransactions());
     }
 
     /**
@@ -70,15 +58,12 @@ public class PortfolioService {
      *
      * @param dateTime date and time of the statement (inclusive). Never transactions are filtered out.
      * @param transactions list of transactions
-     * @param reinvestInternalFlow false if internal flow (dividend etc.) are not reinvested and false if they are.
      * @return List of StatementOfAssets
      */
-    public List<StatementOfAsset> portfolioAt(DateTime dateTime, List<ITransaction> transactions,
-                                              boolean reinvestInternalFlow) {
-
+    public List<StatementOfAsset> portfolioAt(DateTime dateTime, List<ITransaction> transactions) {
         return transactions.stream()
                 .filter(TransactionService.before(dateTime))
-                .filter(x -> reinvestInternalFlow || !x.getFlowType().equals(FlowType.INTERNAL))
+                .filter(x -> !x.getFlowType().equals(FlowType.INTERNAL))
                 .collect(Collectors.groupingBy(ITransaction::getAsset))
                 .entrySet().stream()
                 .map(p -> statement(p.getKey(), p.getValue(), dateTime))
@@ -95,22 +80,19 @@ public class PortfolioService {
      * @return created StatementOfAsset
      */
     private StatementOfAsset statement(IAsset asset, List<? extends ITransaction> transactions, DateTime dateTime) {
-        StatementOfAsset statement = new StatementOfAsset(asset);
-
-        BigDecimal count = transactionService.sumCount(transactions);
-        BigDecimal value = transactionService.sumAmount(transactions);
-
         Optional<BigDecimal> price = priceService.getPriceAt(dateTime, asset, false);
         Optional<BigDecimal> basePrice = priceService.getPriceAt(dateTime, asset, true);
-
-        statement.setCount(count);
-        statement.setValue(price.isPresent() ? price.get().multiply(count) : count);
-        statement.setBaseValue(basePrice.isPresent() ? basePrice.get().multiply(count) : count);
-
+        BigDecimal count = transactionService.sumCount(transactions);
+        BigDecimal value = transactionService.sumAmount(transactions);
         Supplier<BigDecimal> defaultPrice = () -> value.divide(count, RoundingMode.HALF_EVEN);
-        statement.setPrice(price.orElseGet(defaultPrice));
-        statement.setBasePrice(basePrice.orElseGet(defaultPrice));
 
-        return statement;
+        return StatementOfAsset.builder()
+            .asset(asset)
+            .count(count)
+            .value(price.map(bigDecimal -> bigDecimal.multiply(count)).orElse(count))
+            .baseValue(basePrice.map(bigDecimal -> bigDecimal.multiply(count)).orElse(count))
+            .price(price.orElseGet(defaultPrice))
+            .basePrice(basePrice.orElseGet(defaultPrice))
+            .build();
     }
 }

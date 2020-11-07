@@ -3,6 +3,7 @@ package ee.golive.finance.domain;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * TODO Add class and method comments
@@ -15,4 +16,8 @@ public interface ITransaction {
     IAsset getAsset();
     FlowType getFlowType();
     String getDescription();
+
+    default BigDecimal getPrice() {
+        return getAmount().divide(getCount(), RoundingMode.HALF_EVEN);
+    }
 }

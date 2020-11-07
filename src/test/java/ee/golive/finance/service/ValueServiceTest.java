@@ -40,17 +40,6 @@ public class ValueServiceTest {
     }
 
     @Test
-    public void testGetValue() {
-        Snapshot snapshot = mock(Snapshot.class);
-        when(snapshot.getPortfolio()).thenReturn(Arrays.asList(
-                getMockStatement(11.0, 5.5, 60.5),
-                getMockStatement(9.0, 5.33, 47.97)
-        ));
-        assertEquals(new BigDecimal("108.47"),
-                valueService.getValue(snapshot).setScale(2, BigDecimal.ROUND_HALF_EVEN));
-    }
-
-    @Test
     public void getExternalFlow() {
         SnapshotPeriod snapshot = new SnapshotPeriod(mock(Snapshot.class), mock(Snapshot.class));
         snapshot.setTransactions(getMockTransactions());
@@ -78,10 +67,11 @@ public class ValueServiceTest {
     }
 
     private StatementOfAsset getMockStatement(double count, double price, double value) {
-        StatementOfAsset statement = new StatementOfAsset(mock(IAsset.class));
-        statement.setPrice(new BigDecimal(price));
-        statement.setValue(new BigDecimal(value));
-        statement.setCount(new BigDecimal(count));
-        return statement;
+        return StatementOfAsset.builder()
+            .asset(mock(IAsset.class))
+            .price(new BigDecimal(price))
+            .value(new BigDecimal(value))
+            .count(new BigDecimal(count))
+            .build();
     }
 }

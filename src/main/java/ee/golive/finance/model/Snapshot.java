@@ -1,6 +1,7 @@
 package ee.golive.finance.model;
 
 import ee.golive.finance.domain.ITransaction;
+import lombok.Data;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.List;
  *
  *  @author Taavi Ilves
  */
+@Data
 public class Snapshot {
 
     /**
@@ -33,54 +35,8 @@ public class Snapshot {
      */
     private BigDecimal value;
 
-    /**
-     * True if internalFlow is reinvested otherwise false
-     */
-    private Boolean reinvestInternalFlow;
-
-    public Snapshot(DateTime snapshotDateTime, List<ITransaction> transactions, boolean reinvestInternalFlow) {
+    public Snapshot(DateTime snapshotDateTime, List<ITransaction> transactions) {
         this.snapshotDateTime = snapshotDateTime;
         this.transactions = transactions;
-        this.reinvestInternalFlow = reinvestInternalFlow;
-    }
-
-    public List<ITransaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<ITransaction> transactions) {
-        this.transactions = transactions;
-    }
-
-    public DateTime getSnapshotDateTime() {
-        return snapshotDateTime;
-    }
-
-    public void setSnapshotDateTime(DateTime snapshotDateTime) {
-        this.snapshotDateTime = snapshotDateTime;
-    }
-
-    public List<StatementOfAsset> getPortfolio() {
-        return portfolio;
-    }
-
-    public void setPortfolio(List<StatementOfAsset> portfolio) {
-        this.portfolio = portfolio;
-    }
-
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
-
-    public Boolean getReinvestInternalFlow() {
-        return reinvestInternalFlow;
-    }
-
-    public void setReinvestInternalFlow(Boolean reinvestInternalFlow) {
-        this.reinvestInternalFlow = reinvestInternalFlow;
     }
 }
