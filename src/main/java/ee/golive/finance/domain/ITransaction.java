@@ -10,8 +10,9 @@ import java.math.BigDecimal;
  */
 public interface ITransaction {
     DateTime getDateTime();
-    IAsset getAsset();
     BigDecimal getCount();
-    FlowType getFlowType();
     BigDecimal getAmount();
+    IAsset getAsset();
+    FlowType getFlowType();
+    String getDescription();
 }

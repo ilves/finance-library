@@ -6,6 +6,7 @@ import ee.golive.finance.domain.ITransaction;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
  */
 public class ListPriceService implements PriceService {
 
-    List<IPrice> prices;
+    private List<IPrice> prices;
 
     public ListPriceService(List<IPrice> prices) {
         this.prices = prices;
@@ -26,12 +27,23 @@ public class ListPriceService implements PriceService {
     }
 
     @Override
-    public Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset, boolean local) {
-        return prices.stream()
-            .filter(p -> p.getAsset().equals(asset) && p.getDateTime().compareTo(dateTime) <= 0)
-            .sorted((b, a) -> a.getDateTime().compareTo(b.getDateTime()))
-            .map(IPrice::getPrice)
-            .findFirst();
+    public Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset, boolean baseCurrency) {
+        if (asset.getType().equals(IAsset.AssetType.CURRENCY) && !baseCurrency) {
+            return Optional.of(BigDecimal.valueOf(1d));
+        }
+
+        DateTime compareDate = dateTime.plusDays(1).withTimeAtStartOfDay().minusSeconds(1);
+        Optional<IPrice> value = prices.stream()
+                .filter(price -> price.getAsset().equals(asset) && price.getDateTime().compareTo(compareDate) <= 0)
+                .max(Comparator.comparing(IPrice::getDateTime));
+
+        if (!value.isPresent()) {
+            return Optional.empty();
+        } else  if (baseCurrency && !asset.getType().equals(IAsset.AssetType.CURRENCY)) {
+            return Optional.of(getPriceAt(dateTime, asset.getCurrency(), true).orElse(BigDecimal.ONE).multiply(value.get().getPrice()));
+        }
+
+        return value.map(IPrice::getPrice);
     }
 
     @Override

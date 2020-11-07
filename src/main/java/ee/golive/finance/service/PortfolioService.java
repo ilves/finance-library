@@ -2,6 +2,7 @@ package ee.golive.finance.service;
 
 import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.IAsset;
+import ee.golive.finance.domain.IPrice;
 import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.StatementOfAsset;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -80,6 +82,7 @@ public class PortfolioService {
                 .collect(Collectors.groupingBy(ITransaction::getAsset))
                 .entrySet().stream()
                 .map(p -> statement(p.getKey(), p.getValue(), dateTime))
+                .sorted((b, a) -> a.getBaseValue().compareTo(b.getBaseValue()))
                 .collect(Collectors.toList());
     }
 
@@ -97,13 +100,16 @@ public class PortfolioService {
         BigDecimal count = transactionService.sumCount(transactions);
         BigDecimal value = transactionService.sumAmount(transactions);
 
-        Optional<BigDecimal> price = priceService.getPriceAt(dateTime, asset);
+        Optional<BigDecimal> price = priceService.getPriceAt(dateTime, asset, false);
         Optional<BigDecimal> basePrice = priceService.getPriceAt(dateTime, asset, true);
 
         statement.setCount(count);
-        statement.setValue(price.map(bigDecimal -> bigDecimal.multiply(count)).orElse(value));
-        statement.setPrice(price.orElseGet(() -> value.divide(count, RoundingMode.HALF_EVEN)));
-        statement.setBasePrice(basePrice.orElseGet(() -> value.divide(count, RoundingMode.HALF_EVEN)));
+        statement.setValue(price.isPresent() ? price.get().multiply(count) : count);
+        statement.setBaseValue(basePrice.isPresent() ? basePrice.get().multiply(count) : count);
+
+        Supplier<BigDecimal> defaultPrice = () -> value.divide(count, RoundingMode.HALF_EVEN);
+        statement.setPrice(price.orElseGet(defaultPrice));
+        statement.setBasePrice(basePrice.orElseGet(defaultPrice));
 
         return statement;
     }

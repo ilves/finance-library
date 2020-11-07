@@ -4,6 +4,7 @@ import ee.golive.finance.domain.FlowType;
 import ee.golive.finance.domain.IAsset;
 import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.StatementOfAsset;
+import functional.Price;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;

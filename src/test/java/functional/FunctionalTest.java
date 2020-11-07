@@ -38,8 +38,8 @@ public class FunctionalTest {
 
     @Before
     public void setUp() {
-        asset = new functional.Asset();
-        eur = new functional.Asset();
+        asset = new functional.Asset("A", null, IAsset.AssetType.CURRENCY);
+        eur = new functional.Asset("B", null, IAsset.AssetType.CURRENCY);
 
         valueService = new ValueService(priceService);
         priceService = new ListPriceService(getPrices());
@@ -162,7 +162,7 @@ public class FunctionalTest {
     }
 
     private Price getPrice(DateTime d, String v, IAsset as) {
-        Price price = new Price();
+        Price price = Price.builder().build();
         price.setAsset(as);
         price.setDateTime(d);
         price.setPrice(new BigDecimal(v));
@@ -170,7 +170,7 @@ public class FunctionalTest {
     }
 
     private Transaction getTransaction(DateTime d, String a, String c, FlowType f, IAsset as) {
-        Transaction transaction = new Transaction();
+        Transaction transaction = Transaction.builder().build();
         transaction.setDateTime(d);
         transaction.setAmount(new BigDecimal(a));
         transaction.setFlowType(f);

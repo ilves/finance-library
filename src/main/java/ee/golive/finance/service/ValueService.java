@@ -20,7 +20,7 @@ public class ValueService {
 
     public BigDecimal getValue(Snapshot snapshot) {
         return snapshot.getPortfolio().stream()
-                .map(StatementOfAsset::getValue)
+                .map(StatementOfAsset::getBaseValue)
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 

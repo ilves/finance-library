@@ -4,6 +4,7 @@ import ee.golive.finance.domain.ITransaction;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class TransactionService {
     public List<ITransaction> getTransactionsBefore(DateTime dateTime, List<? extends ITransaction> transactions) {
         return transactions
                 .stream()
-                .sorted((x, y) -> x.getDateTime().compareTo(y.getDateTime()))
+                .sorted(Comparator.comparing(ITransaction::getDateTime))
                 .filter(before(dateTime))
                 .collect(Collectors.toList());
     }
