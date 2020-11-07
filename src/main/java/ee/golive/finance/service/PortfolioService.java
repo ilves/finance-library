@@ -84,7 +84,7 @@ public class PortfolioService {
         Optional<BigDecimal> basePrice = priceService.getPriceAt(dateTime, asset, true);
         BigDecimal count = transactionService.sumCount(transactions);
         BigDecimal value = transactionService.sumAmount(transactions);
-        Supplier<BigDecimal> defaultPrice = () -> value.divide(count, RoundingMode.HALF_EVEN);
+        Supplier<BigDecimal> defaultPrice = () -> value.divide(count.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : count, RoundingMode.HALF_EVEN);
 
         return StatementOfAsset.builder()
             .asset(asset)
