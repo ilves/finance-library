@@ -39,7 +39,7 @@ public class ListPriceService implements PriceService {
 
         if (!value.isPresent()) {
             return Optional.of(BigDecimal.valueOf(1d));
-        } else  if (baseCurrency && !asset.getType().equals(IAsset.AssetType.CURRENCY)) {
+        } else  if (baseCurrency && !asset.getType().equals(IAsset.AssetType.CURRENCY) && !value.get().getCurrency().isBaseCurrency()) {
             return Optional.of(getPriceAt(dateTime, value.get().getCurrency(), true).orElse(BigDecimal.ONE).multiply(value.get().getPrice()));
         }
 

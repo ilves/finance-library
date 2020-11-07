@@ -47,7 +47,7 @@ public class SnapshotServiceTest {
 
         // EUR
         assertEquals(new BigDecimal("850.00"), snapshot.getPortfolio().get(0).getValue());
-        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getBaseValue());
+        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getBaseValue().setScale(1, RoundingMode.HALF_EVEN));
 
         // USD
         assertEquals(new BigDecimal("110.00"), snapshot.getPortfolio().get(1).getValue());
@@ -62,8 +62,8 @@ public class SnapshotServiceTest {
         assertEquals(2, snapshot.getPortfolio().size());
 
         // EUR
-        assertEquals(new BigDecimal("850.00"), snapshot.getPortfolio().get(0).getValue());
-        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getBaseValue());
+        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getValue().setScale(1, RoundingMode.HALF_EVEN));
+        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getBaseValue().setScale(1, RoundingMode.HALF_EVEN));
 
         // USD
         assertEquals(new BigDecimal("110.00"), snapshot.getPortfolio().get(1).getValue());
@@ -79,7 +79,7 @@ public class SnapshotServiceTest {
 
         // EUR
         assertEquals(new BigDecimal("850.00"), snapshot.getPortfolio().get(0).getValue());
-        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getBaseValue());
+        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getBaseValue().setScale(1, RoundingMode.HALF_EVEN));
 
         // USD
         assertEquals(new BigDecimal("60.00"), snapshot.getPortfolio().get(1).getValue());
@@ -100,7 +100,7 @@ public class SnapshotServiceTest {
 
         // EUR
         assertEquals(new BigDecimal("850.00"), snapshot.getPortfolio().get(0).getValue());
-        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getBaseValue());
+        assertEquals(new BigDecimal("850.0"), snapshot.getPortfolio().get(0).getBaseValue().setScale(1, RoundingMode.HALF_EVEN));
 
         // USD
         assertEquals(new BigDecimal("60.00"), snapshot.getPortfolio().get(2).getValue());
@@ -121,7 +121,7 @@ public class SnapshotServiceTest {
 
         // EUR
         assertEquals(new BigDecimal("650.00"), snapshot.getPortfolio().get(0).getValue());
-        assertEquals(new BigDecimal("650.0"), snapshot.getPortfolio().get(0).getBaseValue());
+        assertEquals(new BigDecimal("650.00"), snapshot.getPortfolio().get(0).getBaseValue());
 
         // USD
         assertEquals(new BigDecimal("60.00"), snapshot.getPortfolio().get(3).getValue());
@@ -135,7 +135,7 @@ public class SnapshotServiceTest {
         // Stock 2
         assertEquals(new BigDecimal("50.0"), snapshot.getPortfolio().get(1).getCount());
         assertEquals(new BigDecimal("200.00"), snapshot.getPortfolio().get(1).getValue());
-        assertEquals(new BigDecimal("200.00"), snapshot.getPortfolio().get(1).getBaseValue());
+        assertEquals(new BigDecimal("200.0"), snapshot.getPortfolio().get(1).getBaseValue().setScale(1, RoundingMode.HALF_EVEN));
     }
 }
 

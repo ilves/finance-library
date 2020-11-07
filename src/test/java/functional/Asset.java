@@ -9,4 +9,9 @@ import lombok.Data;
 public class Asset implements IAsset {
     private String name;
     private AssetType type;
+
+    @Override
+    public boolean isBaseCurrency() {
+        return "EUR".equals(name);
+    }
 }

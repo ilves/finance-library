@@ -6,6 +6,7 @@ package ee.golive.finance.domain;
  */
 public interface IAsset {
     AssetType getType();
+    boolean isBaseCurrency();
 
     enum AssetType {
         CURRENCY, ASSET
