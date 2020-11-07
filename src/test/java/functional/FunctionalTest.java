@@ -57,7 +57,7 @@ public class FunctionalTest {
 
         TimeWeightedReturn calculator = new TimeWeightedReturn(snapshotPeriods);
         BigDecimal ttwr = calculator.resultOfBigDecimal();
-        assertEquals(new BigDecimal("-1.3906"), ttwr.setScale(4, BigDecimal.ROUND_HALF_DOWN));
+        assertEquals(new BigDecimal("11.4546"), ttwr.setScale(4, BigDecimal.ROUND_HALF_DOWN));
     }
 
     private List<ITransaction> getTransactions() {
@@ -79,8 +79,8 @@ public class FunctionalTest {
         Snapshot snapshotStart = snapshotService.at(start, list, false);
         Snapshot snapshotEnd = snapshotService.at(end, list, false);
         SnapshotPeriod period = snapshotService.createPeriod(snapshotStart, snapshotEnd);
-        assertEquals(new BigDecimal("1000"), snapshotStart.getValue());
-        assertEquals(new BigDecimal("950"), snapshotEnd.getValue());
+        assertEquals(new BigDecimal("1000.00"), snapshotStart.getValue());
+        assertEquals(new BigDecimal("950.00"), snapshotEnd.getValue());
         assertEquals(new BigDecimal("-50"), period.getExternalFlow());
         assertEquals(new BigDecimal("100"), period.getInternalFlow());
     }
@@ -101,8 +101,8 @@ public class FunctionalTest {
         Snapshot snapshotStart = snapshotService.at(start, list, false);
         Snapshot snapshotEnd = snapshotService.at(end, list, false);
         SnapshotPeriod period = snapshotService.createPeriod(snapshotStart, snapshotEnd);
-        assertEquals(new BigDecimal("900"), snapshotStart.getValue());
-        assertEquals(new BigDecimal("500"), snapshotEnd.getValue());
+        assertEquals(new BigDecimal("900.00"), snapshotStart.getValue());
+        assertEquals(new BigDecimal("500.00"), snapshotEnd.getValue());
         assertEquals(new BigDecimal("-500"), period.getExternalFlow());
         assertEquals(new BigDecimal("0"), period.getInternalFlow());
     }
@@ -128,8 +128,8 @@ public class FunctionalTest {
         Snapshot snapshotStart = snapshotService.at(start, list, false);
         Snapshot snapshotEnd = snapshotService.at(end, list, false);
         SnapshotPeriod period = snapshotService.createPeriod(snapshotStart, snapshotEnd);
-        assertEquals(new BigDecimal("200"), snapshotStart.getValue());
-        assertEquals(new BigDecimal("150"), snapshotEnd.getValue());
+        assertEquals(new BigDecimal("200.00"), snapshotStart.getValue());
+        assertEquals(new BigDecimal("150.00"), snapshotEnd.getValue());
         assertEquals(new BigDecimal("-50"), period.getExternalFlow());
         assertEquals(new BigDecimal("50"), period.getInternalFlow());
         Xirr xirr = new Xirr(period);

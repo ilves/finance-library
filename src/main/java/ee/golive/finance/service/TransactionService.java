@@ -44,6 +44,6 @@ public class TransactionService {
     }
 
     public static Predicate<ITransaction> before(DateTime dateTime) {
-        return (t) -> t.getDateTime().compareTo(dateTime) < 0;
+        return (t) -> t.getDateTime().compareTo(dateTime) <= 0;
     }
 }

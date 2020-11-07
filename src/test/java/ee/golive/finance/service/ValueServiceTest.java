@@ -6,6 +6,7 @@ import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.model.Snapshot;
 import ee.golive.finance.model.SnapshotPeriod;
 import ee.golive.finance.model.StatementOfAsset;
+import functional.Transaction;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,7 @@ public class ValueServiceTest {
         valueService = new ValueService(priceService);
 
         when(priceService.getPriceAt(any(DateTime.class), any(IAsset.class))).thenReturn(Optional.empty());
+        when(priceService.getValue(any(Transaction.class))).thenReturn(Optional.empty());
     }
 
     @Test
@@ -79,7 +81,7 @@ public class ValueServiceTest {
         StatementOfAsset statement = new StatementOfAsset(mock(IAsset.class));
         statement.setPrice(new BigDecimal(price));
         statement.setValue(new BigDecimal(value));
-        statement.setItemsCount(new BigDecimal(count));
+        statement.setCount(new BigDecimal(count));
         return statement;
     }
 }

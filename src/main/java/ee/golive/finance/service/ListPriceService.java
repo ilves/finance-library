@@ -22,11 +22,16 @@ public class ListPriceService implements PriceService {
 
     @Override
     public Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset) {
+        return getPriceAt(dateTime, asset, false);
+    }
+
+    @Override
+    public Optional<BigDecimal> getPriceAt(DateTime dateTime, IAsset asset, boolean local) {
         return prices.stream()
-                .filter(p -> p.getAsset().equals(asset) && p.getDateTime().compareTo(dateTime) <= 0)
-                .sorted((b, a) -> a.getDateTime().compareTo(b.getDateTime()))
-                .map(IPrice::getPrice)
-                .findFirst();
+            .filter(p -> p.getAsset().equals(asset) && p.getDateTime().compareTo(dateTime) <= 0)
+            .sorted((b, a) -> a.getDateTime().compareTo(b.getDateTime()))
+            .map(IPrice::getPrice)
+            .findFirst();
     }
 
     @Override

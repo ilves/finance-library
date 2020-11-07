@@ -45,6 +45,9 @@ public class PortfolioServiceTest {
                 .thenReturn(Optional.of(new BigDecimal("40")));
         when(priceService.getPriceAt(any(), eq(money)))
                 .thenReturn(Optional.empty());
+        when(priceService.getPriceAt(any(), eq(money), any(Boolean.class)))
+            .thenReturn(Optional.empty());
+
 
         transactions = Arrays.asList(
                 getMockTransaction(500, 500, FlowType.EXTERNAL, DateTime.parse("2011-03-10"), money), // DEPOSIT

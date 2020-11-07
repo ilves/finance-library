@@ -8,6 +8,7 @@ import ee.golive.finance.model.StatementOfAsset;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,6 +73,7 @@ public class PortfolioService {
      */
     public List<StatementOfAsset> portfolioAt(DateTime dateTime, List<ITransaction> transactions,
                                               boolean reinvestInternalFlow) {
+
         return transactions.stream()
                 .filter(TransactionService.before(dateTime))
                 .filter(x -> reinvestInternalFlow || !x.getFlowType().equals(FlowType.INTERNAL))
@@ -91,13 +93,18 @@ public class PortfolioService {
      */
     private StatementOfAsset statement(IAsset asset, List<? extends ITransaction> transactions, DateTime dateTime) {
         StatementOfAsset statement = new StatementOfAsset(asset);
+
         BigDecimal count = transactionService.sumCount(transactions);
         BigDecimal value = transactionService.sumAmount(transactions);
+
         Optional<BigDecimal> price = priceService.getPriceAt(dateTime, asset);
-        statement.setItemsCount(count);
-        statement.setValue(price.isPresent() ? price.get().multiply(count) : value);
-        statement.setPrice(price.isPresent() ? price.get() : value.divide(count, BigDecimal.ROUND_UP));
-        statement.setInitialValue(value);
+        Optional<BigDecimal> basePrice = priceService.getPriceAt(dateTime, asset, true);
+
+        statement.setCount(count);
+        statement.setValue(price.map(bigDecimal -> bigDecimal.multiply(count)).orElse(value));
+        statement.setPrice(price.orElseGet(() -> value.divide(count, RoundingMode.HALF_EVEN)));
+        statement.setBasePrice(basePrice.orElseGet(() -> value.divide(count, RoundingMode.HALF_EVEN)));
+
         return statement;
     }
 }
