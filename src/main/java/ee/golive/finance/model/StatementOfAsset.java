@@ -16,6 +16,8 @@ public class StatementOfAsset {
     private BigDecimal count;
     private BigDecimal price;
     private BigDecimal basePrice;
+    private BigDecimal avgPrice;
+    private BigDecimal avgBasePrice;
     private BigDecimal value;
     private BigDecimal baseValue;
     private IAsset currency;

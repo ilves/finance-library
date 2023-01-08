@@ -84,6 +84,7 @@ public class PortfolioService {
         Optional<PriceService.PriceResult> basePrice = priceService.getPriceAt(dateTime, asset, true);
         BigDecimal count = transactionService.sumCount(transactions);
         BigDecimal value = transactionService.sumAmount(transactions);
+        TransactionService.AvgPrice averagePrice = transactionService.averagePrice(transactions);
         Supplier<BigDecimal> defaultPrice = () -> value.divide(count.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : count, RoundingMode.HALF_EVEN);
 
         return StatementOfAsset.builder()
@@ -92,6 +93,8 @@ public class PortfolioService {
             .value(price.map(result -> result.price.multiply(count)).orElse(count))
             .baseValue(basePrice.map(result -> result.price.multiply(count)).orElse(count))
             .price(price.isPresent() ? price.get().price : defaultPrice.get())
+            .avgPrice(averagePrice.price)
+            .avgBasePrice(averagePrice.basePrice)
             .basePrice(basePrice.isPresent() ? basePrice.get().price : defaultPrice.get())
             .currency(price.map(PriceService.PriceResult::getCurrency).orElse(null))
             .build();

@@ -15,7 +15,9 @@ public interface ITransaction {
     BigDecimal getAmount();
     IAsset getAsset();
     FlowType getFlowType();
+    TransactionType getType();
     String getDescription();
+    BigDecimal getBasePrice();
 
     default BigDecimal getPrice() {
         return getAmount().divide(getCount(), RoundingMode.HALF_EVEN);

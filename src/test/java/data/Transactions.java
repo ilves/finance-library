@@ -1,15 +1,13 @@
 package data;
 
-import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.IAsset;
-import ee.golive.finance.domain.IPrice;
-import ee.golive.finance.domain.ITransaction;
+import ee.golive.finance.domain.*;
 import functional.Asset;
 import functional.Price;
 import functional.Transaction;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +39,8 @@ public class Transactions {
                 .asset(asset)
                 .description(description)
                 .flowType(FlowType.EXTERNAL)
+                .type(TransactionType.TRANSFER)
+                .basePrice(BigDecimal.valueOf(amount).divide(BigDecimal.valueOf(count), RoundingMode.HALF_EVEN))
                 .build();
     }
 
