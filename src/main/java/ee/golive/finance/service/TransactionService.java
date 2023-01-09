@@ -57,7 +57,7 @@ public class TransactionService {
                 BigDecimal newCount = count.add(tx.getCount());
                 avgPrice = avgPrice.multiply(count).add(tx.getCount().multiply(tx.getPrice()))
                         .divide(newCount, RoundingMode.HALF_EVEN);
-                avgBasePrice = avgBasePrice.multiply(count).add(tx.getCount()).multiply(tx.getBasePrice())
+                avgBasePrice = avgBasePrice.multiply(count).add(tx.getCount().multiply(tx.getBasePrice()))
                         .divide(newCount, RoundingMode.HALF_EVEN);
                 count = newCount;
             } else if (tx.getType().equals(TransactionType.SELL)) {
