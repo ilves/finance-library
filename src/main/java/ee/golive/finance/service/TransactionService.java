@@ -73,8 +73,6 @@ public class TransactionService {
                     .build());
         }
 
-
-
         return new AvgPrice(avgPrice, avgBasePrice);
     }
 
