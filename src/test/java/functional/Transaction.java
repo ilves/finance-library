@@ -1,9 +1,6 @@
 package functional;
 
-import ee.golive.finance.domain.IAsset;
-import ee.golive.finance.domain.FlowType;
-import ee.golive.finance.domain.ITransaction;
-import ee.golive.finance.domain.TransactionType;
+import ee.golive.finance.domain.*;
 import lombok.Builder;
 import lombok.Data;
 import org.joda.time.DateTime;
@@ -21,4 +18,14 @@ public class Transaction implements ITransaction {
     private String description;
     private BigDecimal basePrice;
     private TransactionType type;
+
+    @Override
+    public void setValueContext(ValueContext valueContext) {
+
+    }
+
+    @Override
+    public ValueContext getValueContext() {
+        return null;
+    }
 }
