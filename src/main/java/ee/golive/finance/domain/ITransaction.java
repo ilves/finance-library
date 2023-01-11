@@ -18,7 +18,8 @@ public interface ITransaction {
     TransactionType getType();
     String getDescription();
     BigDecimal getBasePrice();
-
+    void setValueContext(ValueContext valueContext);
+    ValueContext getValueContext();
     default BigDecimal getPrice() {
         return getAmount().divide(getCount(), RoundingMode.HALF_EVEN);
     }

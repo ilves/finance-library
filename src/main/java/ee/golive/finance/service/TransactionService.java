@@ -2,6 +2,7 @@ package ee.golive.finance.service;
 
 import ee.golive.finance.domain.ITransaction;
 import ee.golive.finance.domain.TransactionType;
+import ee.golive.finance.domain.ValueContext;
 import lombok.AllArgsConstructor;
 import org.joda.time.DateTime;
 
@@ -65,7 +66,14 @@ public class TransactionService {
             } else if (tx.getType().equals(TransactionType.SPLIT)) {
                 count = count.add(tx.getCount());
             }
+
+            tx.setValueContext(ValueContext.builder()
+                    .averagePrice(avgPrice)
+                    .averageBasePrice(avgBasePrice)
+                    .build());
         }
+
+
 
         return new AvgPrice(avgPrice, avgBasePrice);
     }
