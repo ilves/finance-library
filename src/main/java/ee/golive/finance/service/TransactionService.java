@@ -62,7 +62,7 @@ public class TransactionService {
                         .divide(newCount, RoundingMode.HALF_EVEN);
                 count = newCount;
             } else if (tx.getType().equals(TransactionType.SELL)) {
-                count = count.subtract((tx.getCount()));
+                count = count.add((tx.getCount()));
             } else if (tx.getType().equals(TransactionType.SPLIT)) {
                 count = count.add(tx.getCount());
             }
